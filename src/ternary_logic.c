@@ -1,7 +1,4 @@
-#define fn
-// Makes automatic indentation easier
-#include <stdio.h>
-//#include<stdlib.h>
+#include "prelude.h"
 
 unsigned short _TRIT[256];
 const unsigned short* TRIT = _TRIT + 128;
