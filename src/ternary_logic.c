@@ -36,7 +36,7 @@ hl |= (d >> 1) << 9;
 hl |= (d != 0) << 8;
 n /=3;}
     return hl; }
-            fn char test1() {
+            fn result test1() {
 char err = 0;
         for (signed char i = -121; i != 122;++i) {
 unsigned short t = to_ltrit(i);
@@ -53,7 +53,6 @@ err += (i != from_ltrit(to_ltrit(i))); }
     if (_init) return;
 unsigned short* trit = TRIT;
 signed char* bin = BIN;
-bin[2] = 4;
         signed char i = 0; do
 trit[i] = 0xFEAA; // recognizable impossible state
 while (++i != 0);
@@ -66,7 +65,7 @@ trit[i] = t;
 bin[t] = i;
 }
     _init = 1;}
-            fn char test2() {
+            fn result test2() {
 init_tables();
 unsigned short* trit = TRIT;
 char err = 0;
@@ -89,7 +88,7 @@ continue; }
 }
     return err; }
 
-            char main () {
+            fn result main () {
 char r;
 init_tables();
 return
