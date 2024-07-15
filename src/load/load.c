@@ -57,7 +57,7 @@ const char* __restrict program
 
             fn result test_single () { result err;
 signed char tape[243];
-for (unsigned char i = 0; i < 243; ++i) tape [i] = rand();
+for (unsigned char i = 0; i < 243; ++i) tape [i] = rand() % 243 - 121;
 char* __restrict prog;
 if ((err = save(NULL, NULL, NULL, tape))) return err;
 signed char tape2[243];
