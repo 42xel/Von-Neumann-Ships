@@ -1,7 +1,9 @@
-#define result char
-// fish interprets error codes as unsigned char, but I guess
-// using computer word length with int would be more efficient.
-#define _ERR_OTHER 1
-#define _ERR_IO 2
-#define _ERR_ARGC 3
-#define _ERR_ARGV 4
+#define result enum errors
+    enum errors {
+_ERR_OTHER = 1,
+_ERR_IO = 2,
+_ERR_ARGC = 3,
+_ERR_ARGV = 4,
+_ERR_NAOP = 15,
+_ERR_WIP = 16,
+};

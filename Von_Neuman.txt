@@ -15,8 +15,10 @@ registers:
 - accumulator ? no
 - file descriptor ?
     (including io, everything is a file)
-- counter : not register but cell modifier.
+- clock : not register but cell modifier.
     used for program and cte
+- counter : same as clock but increment whenever used
+instead of whenever ?
 
 # machine code
 
@@ -26,9 +28,12 @@ Instructions :
 - x2 : a choice of 9 operations
 
 An instruction consists in an op and a constant.
-cte : cw rc rwc
+cte : _c_w _r_w$c _r_w_c
 
-cw rc rwc y : set swap? dbl_cpy?
+cw rc rwc y :
+    set
+    swap?
+    dbl_cpy (c -> rw or r -> cw ?)?
 cw rc rwc s : sieve split orUnsieve
 cw rc rwc S : shake? unShake? shake&
 cw rc rwc a : add
@@ -70,9 +75,10 @@ tritwise opn
     xor (keep, discard, mirror)
 fork/spawn
 filterSplit and sieve are super cool.
-    sieve encompass trit rotations
+    sieve encompass trit rotations and shifts
     particular cases :
-    sieve 0 MIN and MAX : are noop.
+    sieve MIN and MAX : are noop.
+    sieve 0 is set 0
 unsieve ? unsplit (ok add)
 ternary opn/ cond swap
 inc dec : &$ of rw &$c &io  + fork/swap file c ?
@@ -80,6 +86,8 @@ inc dec : &$ of rw &$c &io  + fork/swap file c ?
 indir?
 >1 clock step ?
 loop operator ? (if w goto c else --w)
+
+swap and set ?
 
 # assembly
 

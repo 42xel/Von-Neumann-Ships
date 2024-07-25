@@ -4,5 +4,5 @@
 #include "error.h"
 // todo gestion error
 #include <stdio.h>
-#include "ternary_logic.h"
+// #include "ternary_logic.h"
 #endif
