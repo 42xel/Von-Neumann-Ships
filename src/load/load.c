@@ -2,12 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "load.h"
 
-char help[] = "\
-loads a binary into a struct representing the data\
-Usage:\nload <binary> [<input> [<output>]]\n";
-
-            fn char load_file
+            fn result load_file
 (const char *__restrict filename, signed char buffer[81]) {
 if (filename == NULL) return memset(buffer, 0, 81), 0;
 FILE* file = fopen(filename, "rb");
