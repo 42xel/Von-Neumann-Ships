@@ -1,16 +1,41 @@
-quirky (Subleq)
-hacky (Baba is You)
-complex (Dwarf fortess)
+TODO renommer.
+Von Neumann ships ? Bâtiments de Von Neumann (play with double entendre architecture and boat).
 
-Zach-like :
+# design philosophy
+
+quirky (Subleq)
+What's good about quirkiness is that it levels the playing fields. It makes things interesting for the seasoned players while not alienating newcomers.
+
+Very good for reach, as well as for making these kind of games games and not work.
+
+hacky (Baba is You)
+Hackiness pushes our limits, in a creative, puzzle solving way. It is lot more discriminating IMO than other criterions: I believe anyone could eventuallly finish even hard zach-like, but Baba is You has some seemingly impossible levels. In fact, all level except a few tutorial ones are designed to feel impossible. And for me, many are.
+But it also leads to out of the box thinking in a much more satisfying way than quirkiness.
+For this particular games about self modifying codes, hackyness potential is very high, though not necessarilly easy to tap into.
+
+Very good for puzzle games.
+
+complex (Dwarf fortess)
+Complexity is a goal in an of itself for me. It greatly extends replayability and pushes our minds to the limits, in a creative, builder way.
+
+Very good for sandboxes.
+
+Zachtronics :
 very quirky
 moderately hacky
 moderately to very complex
 
-goal
+This game is pretty much a Zach-like, so comparison is very relevant.
+Zachtronics games are very quirky and I think that, along an extremely high quality polish, including easy learning curve and instant feedback, is what makes their appeal. Each entry is accessible and refreshing, while still having endgame levels that are extremely hard but always doable.
+
+That quirkiness gets in the way of complexity and sandbox relayability IMO (it's ok, they can't have it all).
+
+goal :
 moderately quirky
 very hacky
-very complex
+very complex 
+
+Quirkiness won't be a goal of mine, the constraints should make the game quirky enough. I make this game mostly for myself, and I'm very interested in complex things, so I'd rather not have quirkiness in the way.
 
 # FAQ
 ## Why natural indentation ?
@@ -44,6 +69,8 @@ The specific rules for indentations I follow are as such :
 
 ## Style
 I prefer loop and conditional blocks which do a single job. It reduces nesting. It also opens up the possibility to go brace-less, using the comma operator if needed. For similar reasons, I strongly favor the return early pattern. Combined with brace-less and comma, I prefer to put the return keyword in the same line as the if when possible.
+
+Because I have pragraph style indentation available, I don't use line-breaks to separate chunks of codes, other than to separate top level items. I haven't felt the need to do so yet though, as C is a language with little boiler plate, so using typography to more easily navigate through noise is less of a necessity.
 
 Example 1:
 ```C

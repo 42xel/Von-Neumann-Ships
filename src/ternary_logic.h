@@ -7,12 +7,16 @@
 #ifndef ternary_logic
 #define ternary_logic
 
+typedef signed char Cell;
+typedef signed short Atrit;
+typedef unsigned short Ltrit;
+
 /// The conversion functions aren't meant to be used,
 /// instead the following tables should be used.
-static const unsigned short* LTRIT;
-static const signed char* L2BIN;
-static const unsigned short* ATRIT;
-static const signed char* A2BIN;
+static const Ltrit* LTRIT;
+static const Cell* L2BIN;
+static const Atrit* ATRIT;
+static const Cell* A2BIN;
 /// Initialise the tables above, and register custom printf functions.
 /// Calling it a secnd time does nothing.
 void init();
@@ -42,10 +46,10 @@ o, l, li, lo, ll, lii
 Minus 6 :
 ilo
 */
-signed short to_atrit (signed char n);
+Atrit to_atrit (Cell n);
 /// Convert from arithmetic trits to byte.
 /// See `to_atrit` for an explanation on arith trits.
-signed char from_atrit (signed short a);
+Cell from_atrit (Atrit a);
 /**
 Converts a signed byte to logical trits.
         # Logical Trits.
@@ -74,11 +78,14 @@ nmumu, nunu
 Numbers are preferably displayed of length 5, if some are ommited, assume
 leading `m`s.
 */
-unsigned short to_ltrit (signed char n);
+Ltrit to_ltrit (Cell n);
 /// Convert from logical trits to byte.
 /// See `to_ltrit` for an explanation on logical trits.
-signed char from_ltrit (unsigned short l);
+Cell from_ltrit (Ltrit l);
 /// Convert from arithmetic to logical.
-unsigned short arith_log (unsigned short a);
+Ltrit arith_log (Atrit a);
+
+Cell rand243();
+Cell wrap243(Cell n);
 
 #endif
