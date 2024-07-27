@@ -1,115 +1,137 @@
-ternary system with 81 size addressable space ?
-6
-ixxxx : input
-1xxxx : output
-0xxxx : own/program
-/1,3,441,,
-registers and program counter also live inside 2xxxx
-    can they be moved out of it ?
+# Design
 
+ternary system with 81 size addressable space ?
+
+oxxxx : own/program
+ixxxx : input
+lxxxx : output
 
 registers:
-- read
-- writ
-- progP x 2 (op and cte)
-- accumulator ? no
-- file descriptor ?
-    (including io, everything is a file)
-- clock : not register but cell modifier.
-    used for program and cte
-- counter : same as clock but increment whenever used
-instead of whenever ?
+- prg : the program head. Initially ooooo,
+    meaning the starting instruction is the value at ooooo (*prg).
+- stk : the stack head. Initially oiiii.
+- aux : an auxiliary register. Initially ollll.
+    It is also used for indirections, and io.
 
-# machine code
+- file descriptor ? not readily present on the memory but accessible,
+    much like register addreses.
+    (including special io, everything is a file)
 
-Instructions :
-- x1 : cte position-,-
-- x2 : indirections
-- x2 : a choice of 9 operations
+# Instruction set
 
-An instruction consists in an op and a constant.
-cte : _c_w _r_w$c _r_w_c
+Between 0 and 2 trits are used to describe an operand, depending on the operation.
+The operation takes up the rest, 2 to 5 trits, provided at most 3 trits are used for operands (1 + 2).
 
-cw rc rwc y :
-    set
-    swap?
-    dbl_cpy (c -> rw or r -> cw ?)?
-cw rc rwc s : sieve split orUnsieve
-cw rc rwc S : shake? unShake? shake&
-cw rc rwc a : add
-cw rc rwc m : min max
-cw rc rwc b : tritwise(xor addmod minmax)
-cw rc rwc i : inc_dec($r) inc_dec($w) inc_dec($c)
-cw rc rwc j J :
-    loop(cp  p ? whatever's best for loops)
-    cjmp(pc p ? whatever's best for jumptable)
-    call(cp p)
+short operand description, usually :
+stk[0], prg[0/1], *aux
+
+long operand description, usually :
+pop (stk[-1]), emplace (stk[0]), push (stk[1]),
+prg, prg[0], prg[1],
+aux, *aux, **aux
+
+## Instructions set
+
+### long short (* 27)
+? swap
+
+## short short (* 9)
+
+### stk *6
+push
+pop
+
+## long (* 9)
+immediate load (prg[1])
+
+## short (* 3)
+get_reg_addr
+set_reg_addr # In theory, can be emulated with a combination of get_reg_addr, store, and immediate load
+indirection: *aux = **aux, *aux = *prg[1] et stk[0] = **aux
+
+? addto emplace
+? addfrom emplace
+
+n * stackreduce : *(stk++) opn *stk |> *stk, *(stk--) opn *stk |> *stk, *stk opn *aux |> *stk
+    minus add
+    ? mul
+    ? div mod
+    xor ? addmod
+    min max
+    trit minmax
+    swap
+    swap_addr
+
+? neg
+
+call/loop
+cond
+
+### fixed operand (* 1) : *stk <- opn *aux *stk
+? xor
+? addmod
+? minus
+? neg # would spare a constant and an operation
+      # compared to xor lllll, but it might be
+      # an intentional constraints to push people
+      # to be smart about something simple,
+      # keeping lllll around closeby for bulk negation
+(prg[1] ?)
+sieve
+orUnsieve
+? split
+shake/permut
 
 
-PID PFile(r w) fork  toogle clock  halt
-    file(create delete)
+change_iop # iop long_short ?reversed rw ?failmode
+fork
+inspect (prg[1])
+? 0: halt # could be EoF
+? wait # one of the other operation surely is wait
+? noop # one of the other operation surely is noop.
 
-spe y : set swap dbl_cpy
-spe s : sieve split orUnsieve
-spe S : shake unShake shake&
-spe a : add, mul?, div mod
-spe m : min max
-spe b :
-spe i : toggle minus interp ?
-spe j J : toogle clocks/ minus clocks ?
+? reset registers ?
+? launch w default reg ?
 
-desired operations:
-addition, subtraction
-negation/not
-copy, set
-swap, rotns
-jumps, cond jump, call
-    x3 : p c? pc
-    call : if condition (r) reljump c
-        and write old positiion to w
-min/max
-tritwise opn
-    add mod, carry borrow
-    min/and, max/or
-    rot, mirror, keep, discard
-    xor (keep, discard, mirror)
-fork/spawn
-filterSplit and sieve are super cool.
-    sieve encompass trit rotations and shifts
-    particular cases :
-    sieve MIN and MAX : are noop.
-    sieve 0 is set 0
-unsieve ? unsplit (ok add)
-ternary opn/ cond swap
-inc dec : &$ of rw &$c &io  + fork/swap file c ?
-    + &p abs ? halt ?
-indir?
->1 clock step ?
-loop operator ? (if w goto c else --w)
-
-swap and set ?
+## machine code
+    Becuase of high reflexivity (VN arch) but low level, the exact
+choice of machine code values matters a lot. Ideally, good groupings
+should allow for easy manipulation of code using tritwise operations.
+In practice, there is also the constraint that we aren't rich in
+opcode space.
+    The temporary solution is to leave the instruction set up to
+debate, and to let advanced players configure (map) their own machine
+code (and to use them as inspiration for sensible defaults).
 
 # assembly
 
-pbtq C and P
 
-[&$*][rwpc]
-RWPC => cte equal to the initial value of &[rwpc]
-[&$*] <=> [avi]
-c => directly writing the cte
+- Possibility to anchor the code, to start from anywhere
+instead of oiiii.
+Syntaxe: like a label but name is a number.
+- possibility to enter raw machine code.
 
-add5 :
-*w += $5
-*w += *r
+## examples
+### add5: *liiii = *illll + 5
+oiiii: 5
+0:
+stk |+> -&stk // stk |+> *(--&stk) where the actual variable is &stk, and stk is short for *&stk.
+&aux <> &stk
+aux |> +&stk // aux |> *(++&stk)
 
-add5 serial :
-loop:
-noop
-*w += $5
-*w += *r
-$w += $1
-$w swap $r
-$w += $1
-$w := $C
-*w := $loop
-$w swap $r
+
+### copy serial: for x in liiii .. lllll, *x = *-x
+0:
+
+
+# completion
+input unchanged (no cheating)
+input never changed (read only)
+never read from outut (write only)
+    (*2 ? never used from ouput as rhs
+    and never moved info out from output)
+
+? prg constant (reusability)
+
+
+# score
