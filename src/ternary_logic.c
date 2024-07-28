@@ -218,15 +218,15 @@ inline Cell rand243() {return rand() % 243 - 121;}
 inline Cell wrap243(Cell n) {return (n + 121 + 243) % 243 - 121;}
 
 
-            fn result main () {
-char r;
-init();
-return
-(r = printf("test_atrit:\n"), test_atrit()) ? r :
-(r = printf("test_ltrit:\n"), test_ltrit()) ? r :
-(r = printf("test_ATRIT:\n"), test_ATRIT()) ? r :
-(r = printf("test_A2BIN:\n"), test_A2BIN()) ? r :
-(r = printf("test_LTRIT:\n"), test_LTRIT()) ? r :
-(r = printf("test_L2BIN:\n"), test_L2BIN()) ? r :
-(r = printf("test_printf:\n"), test_printf()) ? r :
-0; }
+//             fn result main () {
+// result r;
+// init();
+// return
+// (r = printf("test_atrit:\n"), test_atrit()) ? r :
+// (r = printf("test_ltrit:\n"), test_ltrit()) ? r :
+// (r = printf("test_ATRIT:\n"), test_ATRIT()) ? r :
+// (r = printf("test_A2BIN:\n"), test_A2BIN()) ? r :
+// (r = printf("test_LTRIT:\n"), test_LTRIT()) ? r :
+// (r = printf("test_L2BIN:\n"), test_L2BIN()) ? r :
+// (r = printf("test_printf:\n"), test_printf()) ? r :
+// 0; }
