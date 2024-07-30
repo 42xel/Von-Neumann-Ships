@@ -1,3 +1,12 @@
+TODO: reorganize. Msot of this stuf doesn't have its place in a toplevel readme
+I'd need a CONTRIBUTE.md thingy, and a ROADMAP
+
+TODO develop ideas for interactive problems
+allows to pause the navigation at any point, navigate it backward and forward, set breakpoints.
+But the really innovative thing would be to allow to manually modify the code mid run. On regular problems, it would invalidate your solution, but you would have a solution to rebase/fixup your solution, using git/lazygit, or some other version control tool (preferably something more quirky, but I don't know any front for version control is as good as lazygit).
+There would also be special problems where mid fly editing would be valid and the scoring would account for it (ideally encouraging it while still having the goal to minimize it).
+(too ambitious ?) Some time limited levels where the goal is to make and use an interactive interfaces (ala powerusers)
+
 TODO renommer.
 Von Neumann ships ? Bâtiments de Von Neumann (play with double entendre architecture and boat).
 
@@ -33,11 +42,22 @@ That quirkiness gets in the way of complexity and sandbox relayability IMO (it's
 goal :
 moderately quirky
 very hacky
-very complex 
+very complex
 
 Quirkiness won't be a goal of mine, the constraints should make the game quirky enough. I make this game mostly for myself, and I'm very interested in complex things, so I'd rather not have quirkiness in the way.
 
 # FAQ
+## Why LPEG ?
+Serious contenders for complex parsing are:
+- existing parsers (relevant for me here: tree-sitter for C toolchain shenanigans, and custom-am)
+- ANTLR
+- LPEG
+- Perl recursive regexp. They're excellent, but they're only as good as you can make a bad idea work.
+
+Grammar when necessary. Composition over substitution. Few common programming idoms over bajillions metacharacters and escape sequences.
+
+I don't know ANTLR, I know LPEG, ...
+
 ## Why natural indentation ?
 If you delved into the code, you'll see that I am not using the usual reversed recursive indentation. If you want to contribute to this project, use whatever style you like, I'll have my ways to format your code --- and I'm assuming you have yours to format mine. I'm fully open to change to something people are more used to if this becomes more than a personal project.
 
