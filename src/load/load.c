@@ -28,9 +28,9 @@ const char* __restrict program
 , const char* __restrict output
 , Tape tape
 ) { result err; return
-(err = load_file(input, tape - 121)) ? err :
-(err = load_file(program, tape - 40)) ? err :
-(err = load_file(output, tape + 41)) ? err :
+(err = load_file(input,   tape - 121)) ? err :
+(err = load_file(program, tape - 40 )) ? err :
+(err = load_file(output,  tape + 41 )) ? err :
 0; }
 
             fn result save_file
@@ -48,29 +48,25 @@ const char* __restrict program
 , const char* __restrict output
 , const Tape tape
 ) { result err; return
-(err = save_file(input == NULL ? "i.out" : input, tape -121)) ? err :
-(err = save_file(program == NULL ? "0.out" : program, tape -40)) ? err :
-(err = save_file(output == NULL ? "1.out" : output, tape + 41)) ? err :
+(err = save_file(input   == NULL ? "i.out" : input,   tape -121)) ? err :
+(err = save_file(program == NULL ? "o.out" : program, tape -40 )) ? err :
+(err = save_file(output  == NULL ? "l.out" : output,  tape + 41)) ? err :
 0; }
 
-            fn result test_single () { result err;
+            fn result _test_single () { result err;
 Cell _tape[243]; Tape tape = _tape + 121;
-// TODO replace by a function in ternary.h
 for (Cell i = -121; i != 122; ++i) tape [i] = rand243();
 char* __restrict prog;
 if ((err = save(NULL, NULL, NULL, tape))) return err;
 Cell _tape2[243]; Tape tape2 = _tape2 + 121;
-if ((err = load("0.out", "i.out", "1.out", tape2))) return err;
+if ((err = load("o.out", "i.out", "l.out", tape2))) return err;
 if (memcmp(_tape, _tape2, 243)) return _ERR_OTHER;
-if ((err = remove("0.out"))) return err;
+// Remove même si pb? or not, it's somewhat precious
+if ((err = remove("o.out"))) return err;
 if ((err = remove("i.out"))) return err;
-if ((err = remove("1.out"))) return err;
-printf("test_single ok\n");
+if ((err = remove("l.out"))) return err;
 return err; }
             fn result test_multiple () { result err;
-for (char i = 0; i++ < 10 && !(err = test_single()););
+for (char i = 0; i++ < 72 && !(err = _test_single()););
 return err;}
-            fn result main (int argc, char **argv) {
-result err; return
-(err = test_multiple()) ? err :
-0; }
+

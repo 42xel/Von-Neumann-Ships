@@ -45,7 +45,8 @@ fn result test_halt() {
 signed char prg = 0, stk = -40, aux = 40;
 signed char _tape[243]; Tape tape = _tape + 121 * sizeof(Cell);
 result r;
-    if ((r = step(tape, &prg, &stk, &aux))) return
+if (r = load(NULL, NULL, NULL, tape)) return r;
+    if (r = step(tape, &prg, &stk, &aux)) return
 r == _SUCCESS ? 0 : r;
     return _ERR_TIMEOUT; }
 /*
@@ -61,7 +62,7 @@ r == _SUCCESS ? 0 : r;
 // test:
 // timeout
 
-            fn result main() {
-result err; return
-(err = test_halt()) ? err :
-0; }
+//             fn result main() {
+// result err; return
+// (err = test_halt()) ? err :
+// 0; }

@@ -138,7 +138,7 @@ continue; }
 
             /// Custom printf handler for arithmetic trits
             fn int atrit_handler
-(FILE *stream, const struct printf_info *info, const void *const *args) {
+(FILE *stream, const struct printf_info *, const void *const *args) {
 Cell value = *((Cell *)args[0]);
 Atrit a = to_atrit(value) << 6;
 char buffer[6];
@@ -154,13 +154,13 @@ default: buffer[index++] = '?'; break;
 return fprintf(stream, "%s", buffer); }
             /// Argument size function
             fn int atrit_arginfo
-(const struct printf_info *info, size_t n, int *argtypes) {
+(const struct printf_info *, size_t n, int *argtypes) {
 if (n > 0) argtypes[0] = PA_INT;
 return 1; }
 
             // Custom handler for logical trits
             fn int ltrit_handler
-(FILE *stream, const struct printf_info *info, const void *const *args) {
+(FILE *stream, const struct printf_info *, const void *const *args) {
 Cell value = *((Cell *)args[0]);
 Ltrit l = to_ltrit(value) << 6;
 char buffer[6];
@@ -175,18 +175,21 @@ default:   buffer[index++] = '?'; break;
     buffer[index] = '\0';
 return fprintf(stream, "%s", buffer); }
             fn int ltrit_arginfo
-(const struct printf_info *info, size_t n, int *argtypes) {
+(const struct printf_info *, size_t n, int *argtypes) {
 if (n > 0) argtypes[0] = PA_INT;
 return 1; }
 
-                    fn result test_printf() {
+// TODO make proper tests.
+                fn result test_printf() {
 Cell test_value = 42;
 printf("Arithmetic Trits: %O\n", test_value);   // liiio
 printf("Logical Trits: %M\n", test_value);
 return 0; }
 
-/// create a centered array mapping Cell
-/// to their short logical ternary representation
+/**
+ create a centered array mapping Cell
+ to their short logical ternary representation
+*/
             fn void init() {
     if (_init) return;
 Ltrit* ltrit = LTRIT;
@@ -197,7 +200,7 @@ Cell* abin = A2BIN;
 atrit[i] = 0xFEAA, // recognizable impossible state
 ltrit[i] = 0xFEAA;
 while (++i != 0);
-        Ltrit j; do
+        Ltrit j = 0; do
 abin[j] = 0x80, // recognizable impossible state
 lbin[j] = 0x80;
 while (++j < 1 << 10);
