@@ -1,11 +1,15 @@
-#include "../prelude.h"
+#include "src/prelude.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "load.h"
 #include "../ternary_logic.h"
 
-            fn result load_file
+
+/// An alias to signify a 243 cells centered array
+pub typedef signed char* Tape;
+
+            pub fn result load_file
 (const char *__restrict filename, Cell buffer[81]) {
 if (filename == NULL) return memset(buffer, 0, 81), 0;
 FILE* file = fopen(filename, "rb");
@@ -22,8 +26,8 @@ Remaining buffer filled with zeroes.\n", filename);
 fclose(file);
 return 0;} // todo unit test ?
 // todo change that when multi-agents
-            fn result load (
-const char* __restrict program
+            pub fn result load (
+  const char* __restrict program
 , const char* __restrict input
 , const char* __restrict output
 , Tape tape
@@ -33,7 +37,7 @@ const char* __restrict program
 (err = load_file(output,  tape + 41 )) ? err :
 0; }
 
-            fn result save_file
+            pub fn result save_file
 (const char *__restrict filename, const Cell buffer[81]) {
 FILE* file = fopen(filename, "wb");
     if (file == NULL) return
@@ -42,8 +46,8 @@ fprintf(stderr, "Error: Could not open file %s\n", filename), _ERR_IO;
 fclose(file);
 return 0; } // todo unit test ?
 // todo change that when multi-agents
-            fn result save (
-const char* __restrict program
+            pub fn result save (
+  const char* __restrict program
 , const char* __restrict input
 , const char* __restrict output
 , const Tape tape

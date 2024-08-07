@@ -54,7 +54,14 @@ my $balanced_brackets = qr/
 )
 /xs;
 
-my $preprocessor = qr/#\N*/;
+# my $preprocessor = qr/#\N*(?{ print "$&\n"; })/;
+my $preprocessor = qr/^\#\s*
+(
+    include\b\N*+(?{ print "$&\n"; })
+    |
+    \N*+
+)
+/mx;
 
 my $rhs = qr/
  (

@@ -11,18 +11,18 @@
 CC = clang
 # Compiler flags
 # -I. allows to include using "absolute" path, relative to the whole project
-CFLAGS = -I. -Wall -Wextra
+CFLAGS = -I. -Wall #-Wextra
 # Linker flags
-LDFLAGS =
+LDFLAGS = -v
 
 # Automatically find all .c files in src and its subdirectories
 SRCS = $(shell find src -name '*.c' | grep -vF src/main.c)
 _SRCDIRS = $(shell dirname $$(find src -name '*.c' | grep -vF src/main.c))
 SRCDIRS = $(_SRCDIRS:%=%/)
 
-# TODO headers before objs
 # headers
-# OUTLINES = $(SRCS:src/%.c=headers/%.ouline)
+# OUTLINES = $(SRCS:src/%.c=headers/%.outline)
+HDRS = $(SRCS:src/%.c=headers/%.h)
 HDRDIRS = $(SRCDIRS:src/%=headers/%)
 
 # Generate the corresponding .o filenames
@@ -57,26 +57,31 @@ tests: $(TSTS)
 unit_tests/log/%.log: unit_tests/bin/% | $(TSTDIRS)
 	$< > $@ 2>&1
 
-# -I$$(dirname $@) allows to use relative path for includes.
-# todo: change to account for the fact that header files are in header.
-unit_tests/bin/%: unit_tests/src/%.c $(OBJS) | $(TSTBINDIRS)
-	$(CC) $(CFLAGS) $$(echo $(OBJS) | perl -- parse_test_obj.pl $< ) -o $@
+# -I$$(dirname headers/$*) allows to use relative path for includes.
+# todo: change to account for the fact that header files are in headers/.
+unit_tests/bin/%: unit_tests/src/%.c $(OBJS) $(HDRS) | $(TSTBINDIRS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -I$$(dirname src/$*) -I$$(dirname headers/$*) $$(echo $(OBJS) | perl -- parse_test_obj.pl $< ) -o $@
 
-.PRECIOUS: unit_tests/src/%.c
+# .PRECIOUS: unit_tests/src/%.c
+.NOTINTERMEDIATE: unit_tests/src/%.c
 unit_tests/src/%.c: src/%.c headers/%.outline | $(TSTSRCDIRS)
 	perl generate_tests.pl $< < headers/$*.outline > $@
 
-# .SECONDARY: headers/%.outline
+# Rule to compile source files to object files
+# -I$$(dirname headers/$*) allows to use relative path for includes.
+# todo: change to account for the fact that header files are in header.
+obj/%.o: src/%.c $(HDRS) | $(OBJDIRS)
+	$(CC) $(CFLAGS) -I$$(dirname $<) -I$$(dirname headers/$*) -c $< -o $@
+
+.NOTINTERMEDIATE: headers/%.h
+.PRECIOUS: headers/%.h
+headers/%.h: headers/%.outline | $(HDRDIRS)
+	perl generate_headers.pl $* < $< > $@
+
 .NOTINTERMEDIATE: headers/%.outline
 # .PRECIOUS: headers/%.outline
 headers/%.outline: src/%.c | $(HDRDIRS)
 	perl outline.pl < $< > $@
-
-# Rule to compile source files to object files
-# -I$$(dirname $@) allows to use relative path for includes.
-# todo: change to account for the fact that header files are in header.
-obj/%.o: src/%.c | $(OBJDIRS)
-	$(CC) $(CFLAGS) -c $< -o $@
 
 %/:
 	mkdir -p $@

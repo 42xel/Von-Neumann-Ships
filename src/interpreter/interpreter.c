@@ -1,4 +1,5 @@
-#include "../prelude.h"
+#include "src/prelude.h"
+#include "interpreter.h"
 #include "opcodes.h"
 #include "../load/load.h"
 #include "../ternary_logic.h"
@@ -19,7 +20,7 @@
 // (signed char* const addr, const signed char value){
 // *addr = value;}
 
-fn result step (
+pub fn result step (
 signed char tape[243]
 , signed char* prg
 , signed char* stk
@@ -31,7 +32,7 @@ signed char tape[243]
 }
     return 0; }
 
-fn result trace_step (
+pub fn result trace_step (
 Tape tape
 , signed char* prg
 , signed char* stk
@@ -62,7 +63,3 @@ r == _SUCCESS ? 0 : r;
 // test:
 // timeout
 
-//             fn result main() {
-// result err; return
-// (err = test_halt()) ? err :
-// 0; }
