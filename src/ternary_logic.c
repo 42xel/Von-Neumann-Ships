@@ -299,4 +299,14 @@ register_printf_function('M', ltrit_handler, ltrit_arginfo);
 #include <stdlib.h>
 pub fn Cell rand243() {return rand() % 243 - 121;}
 pub fn Cell wrap243(Cell n) {return (n + 121 + 243) % 243 - 121;}
+// For incrementation/decrementation, we can't do much better than `wrap`
+// baring hoping for good branch prediction.
+/// like ++(*n) but accounts for wrapping.
+pub fn Cell ppx243(Cell* n) { return *n != +121 ? ++(*n) : (*n = -121); }
+/// like --(*n) but accounts for wrapping.
+pub fn Cell mmx243(Cell* n) { return *n != -121 ? --(*n) : (*n = +121); }
+/// like (*n)++ but accounts for wrapping.
+pub fn Cell xpp243(Cell* n) { return *n != +121 ? (*n)++ : (*n = -121, +121); }
+/// like (*n)-- but accounts for wrapping.
+pub fn Cell xmm243(Cell* n) { return *n != -121 ? (*n)-- : (*n = +121, -121); }
 

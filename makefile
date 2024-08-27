@@ -16,8 +16,8 @@ CFLAGS = -I. -Wall #-Wextra
 LDFLAGS = -v
 
 # Automatically find all .c files in src and its subdirectories
-SRCS = $(shell find src -name '*.c' | grep -vF src/main.c)
-_SRCDIRS = $(shell dirname $$(find src -name '*.c' | grep -vF src/main.c))
+SRCS = $(shell find src -type f -name '*.c' | grep -vF src/main.c)
+_SRCDIRS = $(shell dirname $$(find src -type f -name '*.c' | grep -vF src/main.c))
 SRCDIRS = $(_SRCDIRS:%=%/)
 
 # headers
@@ -34,21 +34,18 @@ TARGET = build/vns
 
 # tests
 TSTS = $(SRCS:src/%.c=unit_tests/log/%.log)
-# TSTSRCS = $(TSTS:unit_tests/log/%.log=unit_tests/src/%.c)
 TSTSRCDIRS = $(SRCDIRS:%=unit_tests/%)
 TSTDIRS = $(TSTSRCDIRS:unit_tests/src/%=unit_tests/log/%)
-# TSTBINS = $(TSTS:unit_tests/log/%.log=unit_tests/bin/%)
 TSTBINDIRS = $(TSTDIRS:unit_tests/log/%=unit_tests/bin/%)
 
-.PHONY: tests clean
 
+.PHONY: tests clean all
 # Default rule
 all: $(TARGET)
-# all: $(OBJS)
 
 # # Rule to link the executable
-$(TARGET): $(OBJS) | build/
-	$(CC) $(LDFLAGS) $(OBJS) src/main.c -o $@
+$(TARGET): src/main.c $(OBJS) $(HDRS) | build/
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -I$$(dirname $<) -I$$(dirname headers/main) src/main.c -o $@
 
 # Tests rule
 tests: $(TSTS)
