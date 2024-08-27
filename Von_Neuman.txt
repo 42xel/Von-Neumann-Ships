@@ -1,3 +1,14 @@
+# CLI design
+
+    -l --level <level number>
+    -n <number of iterations>
+defaults to XXX (say 1000)
+    -p --path
+path
+    -c --check
+
+
+
 # Design
 
 ternary system with 81 size addressable space ?

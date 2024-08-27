@@ -32,25 +32,43 @@ OBJDIRS = $(SRCDIRS:src/%=obj/%)
 # Define the output executable
 TARGET = build/vns
 
-# tests
+# unit_tests
 TSTS = $(SRCS:src/%.c=unit_tests/log/%.log)
 TSTSRCDIRS = $(SRCDIRS:%=unit_tests/%)
 TSTDIRS = $(TSTSRCDIRS:unit_tests/src/%=unit_tests/log/%)
 TSTBINDIRS = $(TSTDIRS:unit_tests/log/%=unit_tests/bin/%)
 
+# levels
+LVLSPATH = src/levels/levels/
+LVLS = $(shell find $(LVLSPATH) -mindepth 2 -maxdepth 2 -type d)
+LVLSTSTS = $(LVLS:%=%/.tests)
 
-.PHONY: tests clean all
+CLEAN_LEVELS = $(LVLS:%=%/.clean)
+
 # Default rule
-all: $(TARGET)
+all: $(TARGET) levels
+
+.PHONY: tests unit_tests level_tests levels clean all $(LVLSALL) $(LVLSTSTS) $(CLEAN_LEVELS)
 
 # # Rule to link the executable
 $(TARGET): src/main.c $(OBJS) $(HDRS) | build/
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -I$$(dirname $<) -I$$(dirname headers/main) src/main.c -o $@
 
-# Tests rule
-tests: $(TSTS)
+# Tests ruleS
+tests: unit_tests level_tests
+unit_tests: $(TSTS)
 	! grep KO $(TSTS)
 
+level_tests: $(LVLSTSTS)
+levels: $(LVLS)
+
+$(LVLSTSTS): $(TARGET) | $(LVLSPATH)
+	make --directory $$(dirname $@) tests
+
+$(LVLS): | $(LVLSPATH)
+	make --directory $@
+
+.NOTINTERMEDIATE: unit_tests/log/%.log
 unit_tests/log/%.log: unit_tests/bin/% | $(TSTDIRS)
 	$< > $@ 2>&1
 
@@ -87,9 +105,12 @@ headers/%.outline: src/%.c | $(HDRDIRS)
 # 	mkdir -p $@ $(OBJDIRS)
 
 # Clean rule
-clean:
-#	find $(TARGET) -path "obj/*" -path "headers/*" -path "unit_tests/*" -type f -delete
-	rm -rf obj/ headers/ unit_tests/ $(TARGET)
+clean: $(CLEAN_LEVELS)
+	rm -rf obj/ headers/ unit_tests/ $(TARGET);
 
 # TODO clean_headers (separately)
+
+$(CLEAN_LEVELS): | $(LVLSPATH)
+	make --directory $$(dirname $@) clean
+
 

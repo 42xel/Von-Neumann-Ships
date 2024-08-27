@@ -1,0 +1,7 @@
+#!/bin/sh
+cat ./in_i.bin - ./out_i.bin |
+../../../../../build/vns |
+tail -c 81 |
+diff ./out_x.bin - ||
+echo KO
+
