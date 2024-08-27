@@ -1,0 +1,20 @@
+layout {
+    // pane_template name="bin_viewer" {
+    //     pane
+    // }
+    tab name="vns" split_direction="vertical" cwd="./src/levels/levels/"{
+        pane
+        pane focus=true
+        pane
+    }
+}
+
+keybinds {
+    // ignored for now if launched through new tab action
+    normal {
+        bind "F4" { WriteChars 
+            'hexdump' // -ve "%2_ad\t" 9/1 "%4d " "\n" "%_Ad\n" out_x.bin'
+        }
+    }
+}
+
