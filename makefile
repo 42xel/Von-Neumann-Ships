@@ -16,8 +16,8 @@ CFLAGS = -I. -Wall #-Wextra
 LDFLAGS = -v
 
 # Automatically find all .c files in src and its subdirectories
-SRCS = $(shell find src -type f -name '*.c' | grep -vF src/main.c)
-_SRCDIRS = $(shell dirname $$(find src -type f -name '*.c' | grep -vF src/main.c))
+SRCS = $(shell find src -type f -name '*.c' | grep -v 'src/main.*\.c')
+_SRCDIRS = $(shell dirname $(SRCS))
 SRCDIRS = $(_SRCDIRS:%=%/)
 
 # headers
@@ -30,7 +30,8 @@ OBJS = $(SRCS:src/%.c=obj/%.o)
 OBJDIRS = $(SRCDIRS:src/%=obj/%)
 
 # Define the output executable
-TARGET = build/vns
+MAINS = $(shell find src -type f -name '*.c' | grep 'src/main.*\.c')
+TARGETS = $(MAINS:src/main%.c=target/vns%)
 
 # unit_tests
 TSTS = $(SRCS:src/%.c=unit_tests/log/%.log)
@@ -46,13 +47,17 @@ LVLSTSTS = $(LVLS:%=%/.tests)
 CLEAN_LEVELS = $(LVLS:%=%/.clean)
 
 # Default rule
-all: $(TARGET) levels
+all: $(TARGETS) levels
 
 .PHONY: tests unit_tests level_tests levels clean all $(LVLSALL) $(LVLSTSTS) $(CLEAN_LEVELS)
 
-# # Rule to link the executable
-$(TARGET): src/main.c $(OBJS) $(HDRS) | build/
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -I$$(dirname $<) -I$$(dirname headers/main) src/main.c -o $@
+# Rule to link the executable
+# TODO: remove the save directory creation from here, put it in test and/or target
+target/vns: src/main.c $(OBJS) $(HDRS) | target/ save/
+	$(CC) $(CFLAGS) $(LDFLAGS) -I headers $(OBJS) $< -o $@
+# # TODO: remove the save directory creation from here.
+# target/vns%: src/main%.c $(OBJS) $(HDRS) | target/ save
+# 	$(CC) $(CFLAGS) $(LDFLAGS) -I headers $(OBJS) $< -o $@
 
 # Tests ruleS
 tests: unit_tests level_tests
@@ -62,8 +67,8 @@ unit_tests: $(TSTS)
 level_tests: $(LVLSTSTS)
 levels: $(LVLS)
 
-$(LVLSTSTS): $(TARGET) | $(LVLSPATH)
-	make --directory $$(dirname $@) tests
+$(LVLSTSTS): target/vns | $(LVLSPATH)
+	interpreter=$$(realpath $<) compilation_dir=$$(realpath src/levels/) make --directory $$(dirname $@) tests
 
 $(LVLS): | $(LVLSPATH)
 	make --directory $@
@@ -106,7 +111,7 @@ headers/%.outline: src/%.c | $(HDRDIRS)
 
 # Clean rule
 clean: $(CLEAN_LEVELS)
-	rm -rf obj/ headers/ unit_tests/ $(TARGET);
+	rm -rf obj/ headers/ unit_tests/ $(TARGETS);
 
 # TODO clean_headers (separately)
 

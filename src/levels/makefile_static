@@ -15,7 +15,7 @@ NTST = $(NTSLOGS:.log=.phony)
 
 # TARGET = $(prg*.log)
 
-# TODO finish, notably parse log, maybe make it play rather than all
+# TODO maybe make it play rather than all
 all: $(CASESBINS) $(TSTBINS)
 
 .PHONY: tests clean $(NTST)
@@ -31,13 +31,13 @@ tests: $(TSTLOGS) $(NTST)
 
 .NOTINTERMEDIATE: %.log
 %.log: %_i.bin $(CASESBINS)
-	./check < $< > $@
+	level_dir=$$(dirname $<) ./check < $< > $@
 .not%.log: .not%_i.bin $(CASESBINS)
 	! ./check < $< > $@
 
 %.bin: %.asm
-	realpath -s --relative-to="../../../../" $< |\
-	xargs -I {} sh -c 'cd ../../../../ && customasm {}'
+	realpath --relative-to="$$compilation_dir" $< |\
+	xargs -I {} sh -c 'cd "$$compilation_dir" && customasm {}'
 
 clean:
 	rm -f $(TSTLOGS) $(TSTBINS) $(TARGET)

@@ -1,15 +1,4 @@
-# CLI design
-
-    -l --level <level number>
-    -n <number of iterations>
-defaults to XXX (say 1000)
-    -p --path
-path
-    -c --check
-
-
-
-# Design
+# Engine Design
 
 ternary system with 81 size addressable space ?
 
@@ -29,6 +18,7 @@ registers:
     (including special io, everything is a file)
 
 # Instruction set
+Unstable and unfinished. For now, see src/interpreter/opcode.h and src/interpreter/interpreter.c .
 
 Between 0 and 2 trits are used to describe an operand, depending on the operation.
 The operation takes up the rest, 2 to 5 trits, provided at most 3 trits are used for operands (1 + 2).
@@ -115,7 +105,7 @@ debate, and to let advanced players configure (map) their own machine
 code (and to use them as inspiration for sensible defaults).
 
 # assembly
-
+For now, relying heavily on customasm
 
 - Possibility to anchor the code, to start from anywhere
 instead of oiiii.
@@ -135,7 +125,107 @@ aux |> +&stk // aux |> *(++&stk)
 0:
 
 
-# completion
+# CLI design
+
+Several executables, not too much, but maybe just enough.
+
+## vns
+    the interpreter and maybe compiler (for now, it's customasm)
+## ???
+    maybe a compiler/transpiler
+(maybe a set a transpiler and a single command to rule them all)
+
+## vns_game
+The CLI (unstable) version of the game.
+SYNOPSIS
+	vns_game [run] [OPTIONS ...] [--] [TARGETS ...]
+DESCRIPTION
+	vns_game helps you play the game, by mostly handling savegames, progression, and level submissions.
+Without options, it opens the default save folder, (re)creating it if neededd.
+It then checks the level solutions in order, printing information to stderr along the way.
+It finally stops at the first level unsolved, if any, and outputs the path to its dir in stdin.
+
+OPTIONS
+        In case of contradicting options, the last one overides the others.
+    Verifications
+        WIP --check (default)
+        TODO --no-check skip the log check to know whether a level has been solved, effectively assuming they are not solved.
+
+        TODO --check-time(defaut ?) check the last modification times of sources log and solution to now whether to rerun the tests. Decide the granularity of what to run at the level test case level.
+        WIP --no-check-time do not checks the last modification time of files, effectively assuming they are up to date. For each level that is to be ran, rerun all the test cases.
+
+        WIP --run rerun all the solutions against the test
+        WIP --no-run do not run test, prints to stderr what would have been ran instead.
+
+        TODO --all(default when explicit levels are individually provided unless overriden) runs all the level, even if some are in error. Provides no guarranty on the order in which the testcases are run.
+        WIP --sequential(default) runs the test in order one after the other, stops at the first error.
+
+    TARGETS
+        TODO --save-dir <save_dir> specifies the directory of the save to use. By default...
+        TODO --level-dir : a way to specify custom levels
+        TODO --levels-dir : a way to specify custom campaigns
+        TODO --levels <level_id> [SOLUTION] [--case <test_case_no>...] ... specifies the levels and cases to run. If no levels are specified, all of them are considered. If a level is specified but not its test cases, all of them are considered (see verification options to see which levels and cases are actually ran). +-= notation for relative offset.
+        If solution is not provided, the save directory is used.
+        Is this option implied ? or maybe -- is sufficient ? if it's the only list.
+        TODO level range ? with my dumbass numeration, I can't even leverage seq.
+        SOLUTION
+            TODO --solution <save_dir> the level directory to use. Implies --level prefix, errors if the prefix is bad and the level is not otherwise given with level.
+            TODO --solution <save_file> the level file to use when applicable (no garranty is made that the solution to levels will always be a single file). Implies --level prefix, errors if the prefix is bad and the level is not otherwise given with level. As a particular case, '-' denotes stdin, in which case specifying the level is mandatory. If you want to run the next level with stdin in a single command without substitution, use `--level +0` (checked) or `--level +1` (unchecked)
+
+    TODO Savefiles manipulations
+        option to prune empty level directories ?
+        to fill them (unlock all/some levels) ? or to fill some ? isn't fill just --no-check --no-time --no-run ? Nah, that is just printing the last dir
+
+# levels
+
+## level ideas
+
+### classical problems
+- arithmetics (ideas written in reversed polish `.` is input):
+    - .3+
+    - ....+*-
+    - prime
+    - foobar
+    - syracuse
+    - long integers
+- something something lookup table ?
+    - mapping
+- copy
+    - copy just 2
+    - reversed copy
+    - append
+- range
+    - reversed
+    - repeat
+- delete
+    - peek and shift
+    - seek, delete and shift
+- search
+    - prefix
+    - suffix
+    - sub-pattern
+    - sub-sequence
+- vector operation
+    - arithmetics
+    - clamping
+- 'crypto'
+    - cyphper
+
+### less classical problems
+- quine(s)
+
+Problems consisting of an input and a flux.
+For example, solving mapping with indirect jump.
+
+### interactive problems
+step, pause, vcs/git
+realtime ?
+console ?
+editor ?
+
+### multi something
+
+## completion
 input unchanged (no cheating)
 input never changed (read only)
 never read from outut (write only)
@@ -144,5 +234,11 @@ never read from outut (write only)
 
 ? prg constant (reusability)
 
+## score
 
-# score
+# User Interface
+On the launching screen, have something like EXAPUNKS, whith keywords popping and fading in the backgrounds.
+
+Ideally, they should be fragments of the codes running the game within the game.
+Because that's currently impossible, they should be sampled at random among .not_sol and the savegames.
+

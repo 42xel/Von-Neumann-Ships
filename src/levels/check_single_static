@@ -1,7 +1,8 @@
 #!/bin/sh
-cat ./in_i.bin - ./out_i.bin |
-../../../../../build/vns |
+# TODO make better error logging.
+cat $level_dir/in_i.bin - $level_dir/out_i.bin |
+$interpreter |
 tail -c 81 |
-diff ./out_x.bin - ||
+diff $level_dir/out_x.bin - 2>&1 ||
 echo KO
 

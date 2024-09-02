@@ -52,8 +52,8 @@ Mkfile.old
 dkms.conf
 
 ## End of default C ./.gitignore
-
 draft/
 unit_tests/
 headers/
-build/
+target/
+save/

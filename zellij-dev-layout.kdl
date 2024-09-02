@@ -1,8 +1,8 @@
 layout {
     tab {
-        // executing sh and not directly setsid to expand src/**/*
+        // executing sh and not directly setsid to expand
         pane command="sh" close_on_exit=true {
-            args "-c" "setsid kak -d -s vns src/**/* ; disown && exit"
+            args "-c" "setsid -f kak -d -s vns $(find src -type f ! -name *.bin ! -name .gitignore)"
         }
     }
     default_tab_template name="ui" {
@@ -45,9 +45,6 @@ keybinds {
                 x "1"
                 y "2"
             }
-        }
-        bind "F7" {
-            NewTab; WriteChars "make clean "
         }
     }
     normal {
