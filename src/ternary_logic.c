@@ -298,7 +298,8 @@ register_printf_function('M', ltrit_handler, ltrit_arginfo);
 // becoming `pub inline bla bla bla toto() {}`, defining it twice.
 #include <stdlib.h>
 pub fn Cell rand243() {return rand() % 243 - 121;}
-pub fn Cell wrap243(Cell n) {return (n + 121 + 243) % 243 - 121;}
+// We take an integer as input so as not to wrap256 the result prematurally
+pub fn Cell wrap243(int n) {return (n + 121 + 243) % 243 - 121;}
 // For incrementation/decrementation, we can't do much better than `wrap`
 // baring hoping for good branch prediction.
 /// like ++(*n) but accounts for wrapping.

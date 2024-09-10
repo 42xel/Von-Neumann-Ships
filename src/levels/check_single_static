@@ -1,8 +1,0 @@
-#!/bin/sh
-# TODO make better error logging.
-cat $level_dir/in_i.bin - $level_dir/out_i.bin |
-$interpreter |
-tail -c 81 |
-diff $level_dir/out_x.bin - 2>&1 ||
-echo KO
-

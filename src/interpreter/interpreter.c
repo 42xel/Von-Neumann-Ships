@@ -4,6 +4,7 @@
 #include "../load/load.h"
 #include "../ternary_logic.h"
 
+// TODO : remove printing once trace_step or some other form of tracing is done
             pub fn result step (
 Tape tape
 , Cell* prg
@@ -16,7 +17,7 @@ case LOAD_STK_HAT: fprintf(stderr, "LOAD_STK_HAT\n"); tape[mmx243(stk)] = tape[x
 case LOAD_STK_HED: fprintf(stderr, "LOAD_STK_HED\n"); tape[*stk]        = tape[xpp243(prg)]; return 0;
 case LOAD_STK_TAI: fprintf(stderr, "LOAD_STK_TAI\n"); tape[ppx243(stk)] = tape[xpp243(prg)]; return 0;
 case LOAD_PRG_JMP: fprintf(stderr, "LOAD_PRG_JMP\n"); *prg              = tape[*prg];        return 0;
-case LOAD_PRG_HLT: fprintf(stderr, "LOAD_PRG_HLT\n"); *prg              = wrap243(++*prg);   return _SUCCESS;
+case LOAD_PRG_HLT: fprintf(stderr, "LOAD_PRG_HLT\n"); mmx243(prg);                    return _SUCCESS;
 case LOAD_PRG_NOP: fprintf(stderr, "LOAD_PRG_NOP\n"); xpp243(prg);                           return 0;
 case LOAD_AUX_ADR: fprintf(stderr, "LOAD_AUX_ADR\n"); *aux              = tape[xpp243(prg)]; return 0;
 case LOAD_AUX_DIR: fprintf(stderr, "LOAD_AUX_DIR\n"); tape[*aux]        = tape[xpp243(prg)]; return 0;
@@ -90,6 +91,7 @@ case REDU_MOV_TAI: fprintf(stderr, "REDU_MOV_TAI\n"); xmm243(stk);              
 // // TODO
 //     return 0; }
 
+// TODO : see if some meta programming is possible at all to optimize the loop
 /// Runs the machine until it stops or reached n iterations.
 /// Set n to a negative vaue to have no iteration limit.
 /// If tape, prg, stk or aux are not NULL, default values are provided
@@ -100,11 +102,8 @@ Tape tape
 , Cell* aux
 , unsigned n
 ) { result r;
-if (tape == NULL) return _ERR_MEM;
-Cell _prg = 0;  if (prg == NULL) prg = &_prg;
-Cell _stk = -40; if (stk == NULL) stk = &_stk;
-Cell _aux = 40; if (aux == NULL) aux = &_aux;
-         for (signed i = n;--i != 0;)
+if (tape == NULL || prg == NULL || stk == NULL || aux == NULL) return _ERR_MEM;
+         while (n-- != 0)
 if (r = step(tape, prg, stk, aux)) return r == _SUCCESS ? 0 : r;
    return _ERR_TIMEOUT;
 }

@@ -9,6 +9,7 @@
 
 # C Compiler
 CC = clang
+# CC = gcc
 # Compiler flags
 # -I. allows to include using "absolute" path, relative to the whole project
 CFLAGS = -I. -Wall #-Wextra
@@ -21,15 +22,14 @@ _SRCDIRS = $(shell dirname $(SRCS))
 SRCDIRS = $(_SRCDIRS:%=%/)
 
 # headers
-# OUTLINES = $(SRCS:src/%.c=headers/%.outline)
 HDRS = $(SRCS:src/%.c=headers/%.h)
 HDRDIRS = $(SRCDIRS:src/%=headers/%)
 
-# Generate the corresponding .o filenames
+# corresponding .o filenames
 OBJS = $(SRCS:src/%.c=obj/%.o)
 OBJDIRS = $(SRCDIRS:src/%=obj/%)
 
-# Define the output executable
+# output executable(s)
 MAINS = $(shell find src -type f -name '*.c' | grep 'src/main.*\.c')
 TARGETS = $(MAINS:src/main%.c=target/vns%)
 
@@ -51,13 +51,9 @@ all: $(TARGETS) levels
 
 .PHONY: tests unit_tests level_tests levels clean all $(LVLSALL) $(LVLSTSTS) $(CLEAN_LEVELS)
 
-# Rule to link the executable
-# TODO: remove the save directory creation from here, put it in test and/or target
-target/vns: src/main.c $(OBJS) $(HDRS) | target/ save/
+# The VM executable
+target/vns_vm: src/main_vm.c $(OBJS) $(HDRS) | target/
 	$(CC) $(CFLAGS) $(LDFLAGS) -I headers $(OBJS) $< -o $@
-# # TODO: remove the save directory creation from here.
-# target/vns%: src/main%.c $(OBJS) $(HDRS) | target/ save
-# 	$(CC) $(CFLAGS) $(LDFLAGS) -I headers $(OBJS) $< -o $@
 
 # Tests ruleS
 tests: unit_tests level_tests
@@ -67,7 +63,7 @@ unit_tests: $(TSTS)
 level_tests: $(LVLSTSTS)
 levels: $(LVLS)
 
-$(LVLSTSTS): target/vns | $(LVLSPATH)
+$(LVLSTSTS): target/vns_vm | $(LVLSPATH)
 	interpreter=$$(realpath $<) compilation_dir=$$(realpath src/levels/) make --directory $$(dirname $@) tests
 
 $(LVLS): | $(LVLSPATH)
@@ -105,9 +101,6 @@ headers/%.outline: src/%.c | $(HDRDIRS)
 
 %/:
 	mkdir -p $@
-
-# obj/__dirs:
-# 	mkdir -p $@ $(OBJDIRS)
 
 # Clean rule
 clean: $(CLEAN_LEVELS)

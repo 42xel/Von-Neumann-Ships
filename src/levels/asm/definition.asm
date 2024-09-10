@@ -95,7 +95,7 @@
     min_max => asm { REDU_MNX_HED }
     twise_min_max => asm { REDU_TNX_HED }
     swap => asm { REDU_SWP_HED }
-    ; TODO: handle swp separately
+    ; TODO: handle swp separately ? not nec
     mov => asm { REDU_SWP_ADR }
 }
 
@@ -122,5 +122,6 @@
     addr {op: rsw} {tgt: target} => (asm { ADDR_SWP_PRG} + 3 * op + tgt)`8
 
     reduce {op: reduce_op} {at: red_at} => (op + at)`8
+    ; reduce swap addr { REDU_SWP_ADR }
 }
 

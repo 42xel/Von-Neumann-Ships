@@ -21,10 +21,10 @@ layout {
         pane split_direction="vertical" {
             pane {
                 // TODO : something with -E :deamonize-session once I upgraded to the latest kakoune version
-                vns {  args "-c" "vns" "makefile"; }
+                vns {  args "-c" "vns" "TODO.md"; }
             }
-            vns focus=true { args "-c" "vns" "src/main.c"; }
-            vns { args "-c" "vns" "src/error.h"; }
+            vns focus=true { args "-c" "vns"; }
+            vns { args "-c" "vns" "makefile"; }
         }
     }
 }

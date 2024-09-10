@@ -55,5 +55,5 @@ dkms.conf
 draft/
 unit_tests/
 headers/
-target/
+target/vns_vm
 save/
