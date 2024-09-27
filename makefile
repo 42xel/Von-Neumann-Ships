@@ -1,11 +1,10 @@
 # SHELL := /bin/dash
 
-# TODO use .SECONDARY when relevant
 # TODO see if $(*D) is useable in any way instead of DIRS.
 #  Then don't use it cause it's likely worse.
 # TODO : write the conversion tables to a rsc/ binary file
 #  and open it instead of generating at every launch of the game.
-#  make it .NOTINTERMEDIATE/an actual target
+# TODO : make header files and outlines INTERMEDIATE (as well as SECONDARY ?) ?
 
 # C Compiler
 CC = clang
@@ -20,6 +19,9 @@ LDFLAGS = -v
 SRCS = $(shell find src -type f -name '*.c' | grep -v 'src/main.*\.c')
 _SRCDIRS = $(shell dirname $(SRCS))
 SRCDIRS = $(_SRCDIRS:%=%/)
+
+# outlines
+OUTLINES = $(SRCS:src/%.c=headers/%.outline)
 
 # headers
 HDRS = $(SRCS:src/%.c=headers/%.h)
@@ -47,9 +49,14 @@ LVLSTSTS = $(LVLS:%=%/.tests)
 CLEAN_LEVELS = $(LVLS:%=%/.clean)
 
 # Default rule
-all: $(TARGETS) levels
+game: $(TARGETS) # levels
 
-.PHONY: tests unit_tests level_tests levels clean all $(LVLSALL) $(LVLSTSTS) $(CLEAN_LEVELS)
+# Rle to make everything, including files considered secnodary in branch `root`
+all: game headers
+
+outlines: $(OUTLINES)
+
+.PHONY: tests unit_tests level_tests outlines headers clean game all $(LVLSALL) $(LVLSTSTS) $(CLEAN_LEVELS) # levels
 
 # The VM executable
 target/vns_vm: src/main_vm.c $(OBJS) $(HDRS) | target/
@@ -61,7 +68,7 @@ unit_tests: $(TSTS)
 	! grep KO $(TSTS)
 
 level_tests: $(LVLSTSTS)
-levels: $(LVLS)
+# levels: $(LVLS)
 
 $(LVLSTSTS): target/vns_vm | $(LVLSPATH)
 	interpreter=$$(realpath $<) compilation_dir=$$(realpath src/levels/) make --directory $$(dirname $@) tests
@@ -69,6 +76,7 @@ $(LVLSTSTS): target/vns_vm | $(LVLSPATH)
 $(LVLS): | $(LVLSPATH)
 	make --directory $@
 
+.PRECIOUS: unit_tests/log/%.log
 .NOTINTERMEDIATE: unit_tests/log/%.log
 unit_tests/log/%.log: unit_tests/bin/% | $(TSTDIRS)
 	$< > $@ 2>&1
@@ -76,12 +84,13 @@ unit_tests/log/%.log: unit_tests/bin/% | $(TSTDIRS)
 # -I$$(dirname headers/$*) allows to use relative path for includes.
 # todo: change to account for the fact that header files are in headers/.
 unit_tests/bin/%: unit_tests/src/%.c $(OBJS) $(HDRS) | $(TSTBINDIRS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -I$$(dirname src/$*) -I$$(dirname headers/$*) $$(echo $(OBJS) | perl -- parse_test_obj.pl $< ) -o $@
+	$(CC) $(CFLAGS) $(LDFLAGS) -I$$(dirname src/$*) -I$$(dirname headers/$*) $$(echo $(OBJS) | perl -- ./toolchain/parse_test_obj.pl $< ) -o $@
 
-# .PRECIOUS: unit_tests/src/%.c
-.NOTINTERMEDIATE: unit_tests/src/%.c
+# PRECIOUS for easier debugging of the toolchain.
+.PRECIOUS: unit_tests/src/%.c headers/%.h headers/%.outline
+.SECONDARY: unit_tests/src/%.c
 unit_tests/src/%.c: src/%.c headers/%.outline | $(TSTSRCDIRS)
-	perl generate_tests.pl $< < headers/$*.outline > $@
+	perl ./toolchain/generate_tests.pl $< < headers/$*.outline > $@
 
 # Rule to compile source files to object files
 # -I$$(dirname headers/$*) allows to use relative path for includes.
@@ -89,26 +98,24 @@ unit_tests/src/%.c: src/%.c headers/%.outline | $(TSTSRCDIRS)
 obj/%.o: src/%.c $(HDRS) | $(OBJDIRS)
 	$(CC) $(CFLAGS) -I$$(dirname $<) -I$$(dirname headers/$*) -c $< -o $@
 
-.NOTINTERMEDIATE: headers/%.h
-.PRECIOUS: headers/%.h
-headers/%.h: headers/%.outline | $(HDRDIRS)
-	perl generate_headers.pl $* < $< > $@
+headers: $(HDRS)
 
-.NOTINTERMEDIATE: headers/%.outline
-# .PRECIOUS: headers/%.outline
+.SECONDARY: headers/%.h
+headers/%.h: headers/%.outline | $(HDRDIRS)
+	perl ./toolchain/generate_headers.pl $* < $< > $@
+
+.SECONDARY: headers/%.outline
 headers/%.outline: src/%.c | $(HDRDIRS)
-	perl outline.pl < $< > $@
+	perl ./toolchain/outline.pl < $< > $@
 
 %/:
 	mkdir -p $@
 
 # Clean rule
 clean: $(CLEAN_LEVELS)
-	rm -rf obj/ headers/ unit_tests/ $(TARGETS);
-
-# TODO clean_headers (separately)
+	rm -rf obj/ $(TARGETS);
+	grep -Fxq 'dev' ./.makeprofile && rm -rf headers/ unit_tests/
 
 $(CLEAN_LEVELS): | $(LVLSPATH)
 	make --directory $$(dirname $@) clean
-
 
