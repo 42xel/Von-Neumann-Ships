@@ -10,7 +10,7 @@ use strict;
 use warnings;
 use re 'strict';
 
-my $dquote = qr/"(?:[^"\\]++|\\.)*+"/;
+my $dquote = qr/"(?:[^"\\]++|\\.)*+"/s;
 
 my $line_comment = qr"//\N*+\n?";
 my $multine_comment = qr"/\* #(?!\*)
