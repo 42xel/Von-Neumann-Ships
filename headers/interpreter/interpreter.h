@@ -1,0 +1,24 @@
+#ifndef interpreter_s_interpreter_h
+#define interpreter_s_interpreter_h
+#include "src/prelude.h"
+#include "interpreter.h"
+#include "src/interpreter/opcodes.h"
+#include "../load/load.h"
+#include "../ternary_logic.h"
+pub fn result step (
+Tape tape
+, Cell* prg
+, Cell* stk
+, Cell* aux
+) ;
+/// Runs the machine until it stops or reached n iterations.
+/// Set n to a negative vaue to have no iteration limit.
+/// If tape, prg, stk or aux are not NULL, default values are provided
+pub fn result n_steps (
+Tape tape
+, Cell* prg
+, Cell* stk
+, Cell* aux
+, unsigned n
+) ;
+#endif
