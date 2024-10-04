@@ -43,14 +43,14 @@ case ADDR_WRT_STK: fprintf(stderr, "ADDR_WRT_STK\n"); *stk = tape[*aux];        
 case ADDR_WRT_PRG: fprintf(stderr, "ADDR_WRT_PRG\n"); *prg = tape[*aux];                        return 0;
 case ADDR_WRT_AUX: fprintf(stderr, "ADDR_WRT_AUX\n"); *aux = tape[*aux];                        return 0;
 
-   case REDU_ADM_HAT: fprintf(stderr, "REDU_ADM_HAT\n"); c = xpp243(stk); goto add_minus;
-   case REDU_ADM_HED: fprintf(stderr, "REDU_ADM_HED\n"); c = *aux;        goto add_minus;
-   case REDU_ADM_TAI: fprintf(stderr, "REDU_ADM_TAI\n"); c = xmm243(stk); goto add_minus;
+   case REDU_ADM_HAT: fprintf(stderr, "REDU_ADM_HAT\t"); c = xpp243(stk); goto add_minus;
+   case REDU_ADM_HED: fprintf(stderr, "REDU_ADM_HED\t"); c = *aux;        goto add_minus;
+   case REDU_ADM_TAI: fprintf(stderr, "REDU_ADM_TAI\t"); c = xmm243(stk); goto add_minus;
    add_minus:
 v = wrap243(tape[*stk] + tape[c]);
 w = wrap243(tape[*stk] - tape[c]);
-fprintf(stderr, "%d %d\n", *stk, c);
-fprintf(stderr, "%d %d\n", v, w);
+fprintf(stderr, "*%d: %d\t", *stk, c);
+fprintf(stderr, "*%d: %d\n", v, w);
 // PONDER : what if *aux == *stk ? Set it to 0 ?
 tape[*stk] = v; tape[c] = w; return 0;
 

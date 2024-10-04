@@ -1,20 +1,20 @@
 ## vns_game
 The CLI (unstable) version of the game.
-SYNOPSIS
+# SYNOPSIS
 	vns_game [run] [OPTIONS ...] [--] [TARGETS ...]
-DESCRIPTION
+# DESCRIPTION
 	vns_game helps you play the game, by mostly handling savegames, progression, and level submissions.
-Without options, it opens the default save folder, (re)creating it if neededd.
+Without options, it opens the default save folder, (re)creating it if needed.
 It then checks the level solutions in order, printing information to stderr along the way.
 It finally stops at the first level unsolved, if any, and outputs the path to its dir in stdin.
 
-OPTIONS
+# OPTIONS
         In case of contradicting options, the last one overides the others.
     Verifications
         WIP --check (default)
-        TODO --no-check skip the log check to know whether a level has been solved, effectively assuming they are not solved.
+        TODO --no-check skip the log check to know whether a level has been solved, effectively assuming they are not solved, potentially running it again.
 
-        TODO --check-time(defaut ?) check the last modification times of sources log and solution to now whether to rerun the tests. Decide the granularity of what to run at the level test case level.
+        TODO --check-time(defaut ?) check the last modification times of sources log and solution to know whether to rerun the tests. Decide the granularity of what to run at the test case level.
         WIP --no-check-time do not checks the last modification time of files, effectively assuming they are up to date. For each level that is to be ran, rerun all the test cases.
 
         WIP --run rerun all the solutions against the test

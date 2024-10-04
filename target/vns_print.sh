@@ -5,6 +5,34 @@
 
 # Without too much effort, hexdump may be leveraged for a more beuatiful result:
 
+usage() {
+    cat << EOF
+Usage: $(basename $0) [OPTIONS ...]
+
+vns_print prints out tape data using hexdump.
+
+Options:
+  -h, --help  Show this help message and exit
+
+Description:
+  - This script reads input tape data and formats it using hexdump.
+  - It displays the tape data along with special registers (prg, stk, aux).
+  - vns_interactive relies on it
+
+Example:
+  $(basename $0) < tape.bin
+
+EOF
+}
+
+# Parsing the otpions
+            if [ $# -gt 0 ]; then
+        case $1 in
+    -h|--help) usage ; exit 0 ;;
+    # *) echo "Unknown option: $1" ; exit 1 ;;
+esac
+fi
+
 tee .temp_tape | tail --bytes=3 >.temp_reg
 
 printf 'offset   '

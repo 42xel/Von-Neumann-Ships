@@ -13,6 +13,7 @@
 }
 
 ; TODO ? A way to closely couple asm and C constants.
+; probably by generating the opcode ruledef automatically from opcode.h
 #ruledef OPCODES
 {
     LOAD_STK_HAT => asm {-4}

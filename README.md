@@ -67,11 +67,11 @@ Install [customasm](https://github.com/hlorenzi/customasm#installation).
 ## Launching your first game
 Open your favorite [terminal (emulator)](https://wezfurlong.org/wezterm/what-is-a-terminal.html) and [shell](https://techterms.com/definition/shell)\*.
 Run the command `vns_game.sh`.
-You should be welcomed with a wall of text [and a half](https://duckduckgo.com/?q=and+then+some&ia=web "and then some"), which should end by telling you the next level you need to work on, and its instructions.
+You should be welcomed with a wall of text and a half, which should end by telling you the next level you need to work on, and its instructions.
 The command `vns_game.sh` created a directory `save` containing the following:
 + `levels/`: an arborescence with each leaf directory corresponding to an individual level
 + `asm/`: the customasm definitions of the assembly language
-    + in particular, `asm/definitions.asm` contains the commented defininion of the whole assembly, including the whole instructions set.
+    + in particular, `asm/definitions.asm` contains the commented definition of the whole assembly, including the whole instructions set.
 + other stuffs to [make the world go round](https://en.wikipedia.org/wiki/Boilerplate), [so to speak](https://www.facebook.com/weknowearthisflat/)
 
 The command `vns_game.sh` [prints](https://en.wikipedia.org/wiki/Standard_streams) mostly on [`stderr`](https://linux.die.net/man/3/stderr).
@@ -84,7 +84,7 @@ to go to the next level.
 Don't worry about running `vns_game` repeatedly, it [won't create things in double](https://en.wikipedia.org/wiki/Idempotence) or [erase all your hard work](https://www.urbandictionary.com/define.php?term=trust%20me%20bro).
 
 
-\* The game is not fully contained and self sufficient, [willingly so](https://github.com/42xel/Von-Neumann-Ships#design-philosophy), hence the need for a shell.
+\* As of now, the game is not fully contained and self sufficient, [willingly so](https://github.com/42xel/Von-Neumann-Ships#design-philosophy), hence the need for a shell.
 
 ## Solving your first level
 In each level directory, you will [find](https://www.man7.org/linux/man-pages/man1/ls.1.html) something along these lines:
