@@ -1,3 +1,15 @@
+Haha! you thought this would contain structured, useful information.
+Nah, it's yet another personal draft.
+
+Get in touch, explore the code on your own.
+
+Still, I'm going to give you one piece of useful information, the current requirements/dependencies of the toolchain:
++ a C compiler
++ perl, to generate headers and unit test
++ make
++ kakoune, to generate markdown table of contents (you don't need to care but I really wanted to flex)
+
+
 # design tenets
 
 quirky (Subleq)

@@ -4,22 +4,24 @@ v Interactive run
     v Step by step.
     x Help menu, filtering the relevant part of the documentation
 v Documentation a comprehensive README, with all the instructions to install and run the game (including make -e ?).
-x A compiler ? customasm is annoying with the rule that you can't go above parent directory. Maybe I should wrap it. For now, it seems the makefile does the job.
+	v all commands ahave a help menu
+- I'd need a CONTRIBUTE.md thingy
+x A compiler ? customasm is annoying with the rule that you can't go above parent directory. Maybe I should wrap it. For now, make and shell script glue well enough.
 - A summary description of the machine and of each assembly instruction and machine code.
 v a way to run the game from within a level folder, so as to suggest looping using `cd $(./vns_game.sh)` from both outside the game and inside each level.
 x 27 or so levels
     - a working loop instruction
-    - a workign conditional instruction
+    - a working conditional instruction
 v a release branch (trunk) separate from the current one (trunk=>root) containing generated headers.
     - Minimizes dependencies necessary to play
+        - Opens a lot more possibilities beyond perl for code generation (lua + LPEG or Raku)
     - Allows dirty hand fix of broken generated headers
-    - Opens a lot more possibilities beyond perl for code generation (lua + LPEG or Raku)
-    - allows to remove the test cases solutions
+    x Allows to remove the test cases solutions
     - Maybe some binaries ?
 
 
 # Player interface
-CLI interface
+-> CLI interface
 Zellij interface
 tmux interface
 normal (ncurse or whatever) TUI
@@ -28,18 +30,17 @@ backup load wipe|new
 navigate ? sh cd ls tree kak !broot(way too big) C
 
 # tooling
+A cheat option in the root branch to more easily work on and solve new levels ? or maybe work directly in the source folder, using the existing `--solution` option.
 macro try and ptry (perror(), try(...)) ?
 
 # later
 perl   => raku or lua + LPEG. Less portable but so much better.
 zellij => Tmux (+ fennel ?) Tmux is so much better, fennel is just flex
-C      => zig ? only if need arises
-git    => ? Whatever Florent B. has been doing ?
-man    => a way to print the man pages ? man pages, typesetters run-off (troff) were inintially meant to be printed. Using a real life ancient prining format would be both a salute to and a flex flex on Zackgames retro papers manuals.
+C      => zig ? only if need arises. But I don't know when need will arise...
+git    => ? Whatever Florent Becker has been doing ?
+man    => a way to print the man pages ? man pages, typesetters run-off (troff) were inintially meant to be printed. Using a real life ancient prining format would be both a salute to and a flex on Zackgames retro papers manuals.
 
-# Documentation and such
-TODO: reorganize. Msot of this stuff doesn't have its place in a toplevel readme
-I'd need a CONTRIBUTE.md thingy, and a ROADMAP
+# Other
 
 TODO develop ideas for interactive problems
 allows to pause the navigation at any point, navigate it backward and forward, set breakpoints.
