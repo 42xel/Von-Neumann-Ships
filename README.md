@@ -35,6 +35,8 @@ In order to install and run the game, you need:
 + A UNIX-like operating system ([Linux](https://kernel.org/), [Redox](https://www.redox-os.org/), [freeBSD](https://www.freebsd.org/), [illuminos](https://illumos.org/), [SerenityOS](https://serenityos.org/), ...)
 + A POSIX Shell
 + GNU linux ? For now, probably. If you wanna try without it, let me know how it goes.
++ make. I may be using features exclusive to GNU make, I can change that if you let me know.
++ (Optional) [hexdump](https://www.man7.org/linux/man-pages/man1/hexdump.1.html).
 
 \* Not really
 
@@ -128,14 +130,17 @@ And practically infinite combinations of tools.
 # Contributing
 Do not hesitate get in touch via [mail](https://github.com/42xel), [discord](https://support.discord.com "4xel4587") or GitHub issue.
 I'll probably answer within a week
+
 ## Ideas and player feedback
-Welcome.
+Welcomed.
 
 Currently, I can use ideas for puzzles and user interface, and soon, I'll need feedback on the instructions set (how to reduce it likey).
+
+The closest thing to a roadmap is `TODO.md`, written for personal use.
 
 ## Bugs reports
 Make issues here, don't overthink it the code base is still very volatile.
 
 ## Hands on participation
-Head to the developping branch.
+Direct participation to code is not anticipaeted or cared for, but if you're really interested, I develop on the branch called `root`, which contains a `CONTRIBUTING.md`.
 
