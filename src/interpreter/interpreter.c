@@ -26,9 +26,12 @@ case LOAD_AUX_IND: fprintf(stderr, "LOAD_AUX_IND\n"); tape[tape[*aux]]  = tape[x
 case STAK_WRT_HAT: fprintf(stderr, "STAK_WRT_HAT\n"); tape[mmx243(stk)] = tape[*aux]; return 0;
 case STAK_WRT_HED: fprintf(stderr, "STAK_WRT_HED\n"); tape[*stk]        = tape[*aux]; return 0;
 case STAK_WRT_TAI: fprintf(stderr, "STAK_WRT_TAI\n"); tape[ppx243(stk)] = tape[*aux]; return 0;
-case STAK_SWP_HAT: fprintf(stderr, "STAK_SWP_HAT\n"); return _ERR_WIP;
-case STAK_SWP_HED: fprintf(stderr, "STAK_SWP_HED\n"); return _ERR_WIP; // redundant /w REDU_SWP_HED ?
-case STAK_SWP_TAI: fprintf(stderr, "STAK_SWP_TAI\n"); return _ERR_WIP;
+
+	case STAK_SWP_HAT: fprintf(stderr, "STAK_SWP_HAT\n"); c = mmx243(stk); goto stk_swap;
+	case STAK_SWP_HED: fprintf(stderr, "STAK_SWP_HED\n"); c = *stk;        goto stk_swap;
+	case STAK_SWP_TAI: fprintf(stderr, "STAK_SWP_TAI\n"); c = ppx243(stk); goto stk_swap;
+stk_swap: v = tape[*aux]; tape[*aux] = tape[c]; tape[c] = v; return 0;
+
 case STAK_REA_HAT: fprintf(stderr, "STAK_REA_HAT\n"); tape[*aux] = tape[xpp243(stk)]; return 0;
 case STAK_REA_HED: fprintf(stderr, "STAK_REA_HED\n"); tape[*aux] = tape[*stk]       ; return 0;
 case STAK_REA_TAI: fprintf(stderr, "STAK_REA_TAI\n"); tape[*aux] = tape[xmm243(stk)]; return 0;
@@ -43,10 +46,10 @@ case ADDR_WRT_STK: fprintf(stderr, "ADDR_WRT_STK\n"); *stk = tape[*aux];        
 case ADDR_WRT_PRG: fprintf(stderr, "ADDR_WRT_PRG\n"); *prg = tape[*aux];                        return 0;
 case ADDR_WRT_AUX: fprintf(stderr, "ADDR_WRT_AUX\n"); *aux = tape[*aux];                        return 0;
 
-   case REDU_ADM_HAT: fprintf(stderr, "REDU_ADM_HAT\t"); c = xpp243(stk); goto add_minus;
-   case REDU_ADM_HED: fprintf(stderr, "REDU_ADM_HED\t"); c = *aux;        goto add_minus;
-   case REDU_ADM_TAI: fprintf(stderr, "REDU_ADM_TAI\t"); c = xmm243(stk); goto add_minus;
-   add_minus:
+   case REDU_ADM_HAT: fprintf(stderr, "REDU_ADM_HAT\t"); c = xpp243(stk); goto sum_diff;
+   case REDU_ADM_HED: fprintf(stderr, "REDU_ADM_HED\t"); c = *aux;        goto sum_diff;
+   case REDU_ADM_TAI: fprintf(stderr, "REDU_ADM_TAI\t"); c = xmm243(stk); goto sum_diff;
+   sum_diff:
 v = wrap243(tape[*stk] + tape[c]);
 w = wrap243(tape[*stk] - tape[c]);
 fprintf(stderr, "*%d: %d\t", *stk, c);
@@ -66,18 +69,30 @@ case REDU_TNX_HAT: fprintf(stderr, "REDU_TNX_HAT\n"); return _ERR_WIP;
 case REDU_TNX_HED: fprintf(stderr, "REDU_TNX_HED\n"); return _ERR_WIP;
 case REDU_TNX_TAI: fprintf(stderr, "REDU_TNX_TAI\n"); return _ERR_WIP;
 
-   case REDU_SWP_HAT: fprintf(stderr, "REDU_SWP_HAT\n"); c = xpp243(stk); goto swap;
-   case REDU_SWP_HED: fprintf(stderr, "REDU_SWP_HED\n"); c = *aux;        goto swap;
-   case REDU_SWP_TAI: fprintf(stderr, "REDU_SWP_TAI\n"); c = xmm243(stk); goto swap;
-   swap: // Using an auxiliary variable dodges *aux == *stk issues.
-v = tape[*stk]; tape[*stk] = tape[c]; tape[c] = v;
-return 0;
+   case REDU_SWP_HAT: fprintf(stderr, "REDU_SWP_HAT\n"); c = xpp243(stk); goto redu_swap;
+   // NOP. not really a swap, but it makes sense if you think about it in a certain way.
+   case REDU_SWP_HED: fprintf(stderr, "REDU_SWP_HED\n"); c = *stk;        goto redu_swap;
+   case REDU_SWP_TAI: fprintf(stderr, "REDU_SWP_TAI\n"); c = xmm243(stk); goto redu_swap;
+ // Using an auxiliary variable dodges *aux == *stk issues.
+redu_swap: v = tape[*stk]; tape[*stk] = tape[c]; tape[c] = v; return 0;
 
 case REDU_MOV_HAT: fprintf(stderr, "REDU_MOV_HAT\n"); xpp243(stk);                  return 0;
 case REDU_SWP_ADR: fprintf(stderr, "REDU_SWP_ADR\n"); *stk ^= *aux ^= *stk ^= *aux; return 0;
 case REDU_MOV_TAI: fprintf(stderr, "REDU_MOV_TAI\n"); xmm243(stk);                  return 0;
 
+// TODO: something fancy with flags.
+case LOOP_NZ_HAT:  fprintf(stderr, "LOOP_NZ_HAT\n");  if (tape[mmx243(stk)])   *prg = tape[*aux]; return 0;
+case LOOP_GT_DECR: fprintf(stderr, "LOOP_GT_DECR\n"); if (mmx243(&tape[*stk])) *prg = tape[*aux]; return 0;
+case LOOP_NZ_TAIL: fprintf(stderr, "LOOP_NZ_TAIL\n"); if (tape[ppx243(stk)])   *prg = tape[*aux]; return 0;
 
+case COND_STK_LE:  fprintf(stderr, "COND_STK_LE\n"); if (tape[*stk] <= 0) *prg = tape[*aux]; return 0;
+case COND_STK_NZ:  fprintf(stderr, "COND_STK_NZ\n"); if (tape[*stk] != 0) *prg = tape[*aux]; return 0;
+case COND_STK_GE:  fprintf(stderr, "COND_STK_GE\n"); if (tape[*stk] >= 0) *prg = tape[*aux]; return 0;
+
+	case CALL_STK_HAT: fprintf(stderr, "CALL_STK_HAT\n"); mmx243(*stk); goto call;
+	case CALL_STK_HED: fprintf(stderr, "CALL_STK_HED\n");               goto call;
+	case CALL_STK_TAI: fprintf(stderr, "CALL_STK_TAI\n"); ppx243(*stk); goto call;
+call: c = *prg + 1; *prg = tape[*stk]; tape[*aux] = c; return 0;
 
    default: return _ERR_NAOP; } }
 
@@ -136,4 +151,7 @@ return _ERR_TIMEOUT; }
 
 // test:
 // timeout
+// loop
+// cnd
+// call
 
