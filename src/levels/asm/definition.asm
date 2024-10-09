@@ -29,6 +29,9 @@
     STAK_WRT_HAT => asm {-13}
     STAK_WRT_HED => asm {-12}
     STAK_WRT_TAI => asm {-11}
+    STAK_SWP_HAT => asm {-10}
+    STAK_SWP_HED => asm {-9}
+    STAK_SWP_TAI => asm {-8}
     STAK_REA_HAT => asm {-7}
     STAK_REA_HED => asm {-6}
     STAK_REA_TAI => asm {-5}
@@ -63,6 +66,19 @@
     REDU_MOV_HAT => asm {-106}
     REDU_SWP_ADR => asm {-105}
     REDU_MOV_TAI => asm {-104}
+
+    LOOP_HAT     => {5}
+    LOOP_DECR    => {6}
+    LOOP_TAIL    => {7}
+
+    COND_STK_LE  => {8}
+    COND_STK_NZ  => {9}
+    COND_STK_GE  => {10}
+
+    CALL_STK_HAT => {11}
+    CALL_STK_HED => {12}
+    CALL_STK_TAI => {13}
+
 }
 
 #subruledef target
@@ -71,11 +87,23 @@
     prg => 0
     aux => 1
 }
+#subruledef symb_target
+{
+    $stk => -1
+    $prg => 0
+    $aux => 1
+}
 #subruledef stk_at
 {
     hat => -1
     hed => 0
     tai => 1
+}
+#subruledef symb_stk_at
+{
+    *--& => -1
+    $ => 0
+    *++& => 1
 }
 #subruledef rsw
 {
@@ -83,46 +111,124 @@
     swap => 0
     write => 1
 }
-
 #subruledef red_at
 {
     hat => -1
     aux => 0
     tai => 1
 }
+#subruledef symb_red_at
+{
+    &stk++ => -1
+    &aux => 0
+    &stk-- => 1
+}
+#subruledef aux_indirection
+{
+    adr => -1
+    dir => 0
+    ind => 1
+}
+#subruledef symb_aux_indirection
+{
+    &aux => -1
+    $aux => 0
+    *aux => 1
+}
 #subruledef reduce_op
 {
-    add_minus => asm { REDU_ADM_HED }
+    sum_diff => asm { REDU_ADM_HED }
     min_max => asm { REDU_MNX_HED }
     twise_min_max => asm { REDU_TNX_HED }
-    swap => asm { REDU_SWP_HED }
-    ; TODO: handle swp separately ? not nec
-    mov => asm { REDU_SWP_ADR }
+    ; swap is handled differently because it operates on the addresses
+    ; swap => asm { REDU_SWP_HED }
+    identity => asm { REDU_SWP_ADR }
 }
 
-; TODO syntax like *stk++, *--stk, **aux
+; TODO : segregate the different styles into different files and choose one to promote as default.
 #ruledef
 {
-    load stk {at: stk_at}, {val: Cell} => (asm { LOAD_STK_HED } + at)`8 @ val
+    ; halts the program (after moving the program head)
     halt, {val: Cell} => asm { LOAD_PRG_HLT } @ val
+    return {val: Cell} => asm { LOAD_PRG_HLT } @ val
     halt => asm { LOAD_PRG_HLT }
-    noop => asm { LOAD_PRG_NOP }
+    ++&prg, return => asm { LOAD_PRG_HLT }
+    ; does nothing (after moving the program head)
     noop, {val: Cell} => asm { LOAD_PRG_NOP } @ val
-    load aux adr => asm { LOAD_AUX_ADR }
-    load aux dir => asm { LOAD_AUX_DIR }
-    load aux ind => asm { LOAD_AUX_IND }
+    ++&prg, {val: Cell} => asm { LOAD_PRG_NOP } @ val
+    noop => asm { LOAD_PRG_NOP }
+    ++&prg => asm { LOAD_PRG_NOP }
+    ; Unconditional jump
+    jmp {val: Cell} => asm { LOAD_PRG_JMP } @ val
+    &prg <- {val: Cell} => asm { LOAD_PRG_JMP } @ val
 
-    {op: rsw} {at: stk_at} => (asm { STAK_SWP_HED } + 3 * op + at)`8
+    ; load a value from the program.
+    ; into `aux` related values
+    load aux {mod: aux_indirection}, {val: Cell} => (asm { LOAD_AUX_DIR } + mod)`8 @ val
+    load aux {mod: aux_indirection} => (asm { LOAD_AUX_DIR } + mod)`8
+    {mod: symb_aux_indirection} <- {val: Cell} => (asm { LOAD_AUX_DIR } + mod)`8 @ val
+
+    ; into `stk` related values
+    load stk {at: stk_at}, {val: Cell} => (asm { LOAD_STK_HED } + at)`8 @ val
+    *--&stk <- {val: Cell} => asm { LOAD_STK_HAT } @ val
+    $stk <-    {val: Cell} => asm { LOAD_STK_HED } @ val
+    *++&stk <- {val: Cell} => asm { LOAD_STK_TAI } @ val
+    load stk {at: stk_at} => (asm { LOAD_STK_HED } + at)`8
+    {at: symb_stk_at}stk <- => (asm { LOAD_STK_HED } + at)`8
+
+    ; read/write/swap interaction between the stack and the auxiliary register
+    {at: symb_stk_at}stk <- $aux  => (asm { STAK_WRT_HED } + at)`8
+    {at: symb_stk_at}stk <-> $aux => (asm { STAK_SWP_HED } + at)`8
+    $aux <- {at: symb_stk_at}stk  => (asm { STAK_REA_HED } + at)`8
     push => asm { STAK_WRT_TAI }
     empl => asm { STAK_WRT_HED }
     dpush=> asm { STAK_WRT_HAT }
     pop  => asm { STAK_REA_TAI }
     peek => asm { STAK_REA_HED }
     dpop => asm { STAK_REA_HAT }
+    {op: rsw} {at: stk_at} => (asm { STAK_SWP_HED } + 3 * op + at)`8
 
-    addr {op: rsw} {tgt: target} => (asm { ADDR_SWP_PRG} + 3 * op + tgt)`8
+    ; address manipulations
+    $aux <-  {tgt: symb_target} => (asm { ADDR_REA_PRG } + tgt)`8
+    $aux <-> {tgt: symb_target} => (asm { ADDR_SWP_PRG } + tgt)`8
+    {tgt: symb_target} <- $aux  => (asm { ADDR_WRT_PRG } + tgt)`8
+    addr {op: rsw} {tgt: target} => (asm { ADDR_SWP_PRG } + 3 * op + tgt)`8
 
+    ; operations.
+    ; behaves like `c = red_at, ($stk, *c) <- op($stk, *c)`
+    ; where `red_at` is `&stk--`, `&aux` or `&stk++`
+    ; and op is one of sum_diff|min_max|twise_min_max|swap
+    a <- {at: symb_red_at}, $stk <{op: reduce_op}> *a  => (op + at)`8
+    a <- &stk--, $stk <swap> *a  => asm { REDU_SWP_TAI }
+    a <- &stk++, $stk <swap> *a  => asm { REDU_SWP_HAT }
     reduce {op: reduce_op} {at: red_at} => (op + at)`8
-    ; reduce swap addr { REDU_SWP_ADR }
+
+    $stk <{op: reduce_op}> $aux  => (op)`8
+    &stk <-> &aux => asm { REDU_SWP_ADR }
+    reduce swap tai => asm { REDU_SWP_TAI }
+    reduce swap hat => asm { REDU_SWP_HAT }
+    nop => asm { REDU_SWP_HED }
+
+    --&stk => asm { REDU_MOV_TAI }
+    ++&stk => asm { REDU_MOV_HAT }
+    &stk <swap> &aux  => asm { REDU_SWP_ADR }
+    $stk <swap> $aux  => asm { STAK_SWP_HED }
+    reduce swap addr => asm { REDU_SWP_ADR }
+
+
+
+    ; control flow
+    *--&stk ? jmp $aux => asm { LOOP_NZ_HAT }
+     --$stk ? jmp $aux => asm { LOOP_GT_DECR }
+    *++$stk ? jmp $aux => asm { LOOP_NZ_TAIL }
+
+    $stk <= 0 ? jmp $aux => { COND_STK_LE }
+    $stk != 0 ? jmp $aux => { COND_STK_NZ }
+    $stk >= 0 ? jmp $aux => { COND_STK_GE }
+
+    ; Call instructions: pick jump address from stack while storing current address to aux.
+    ; behaves like $aux <- &prg + 1, &prg <- {at: symb_stk_at}stk
+    ; where symb_stk_at is one of `*--&`, `$` or `*++&`.
+    $aux <- ++&prg <- {at: symb_stk_at}stk => (asm { CALL_STK_HED } + at)`8
 }
 

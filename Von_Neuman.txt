@@ -30,7 +30,29 @@ long operand description, usually :
 pop (stk[-1]), emplace (stk[0]), push (stk[1]),
 prg, prg[0], prg[1],
 aux, *aux, **aux
-self-relative indirections ?
+self-relative indirections ? could be add[to|from] emplace
+
+PONDER there are 6 non constant comparisons possible.
+    LOOP = 8,
+is LOOP a particular case of COND ?
+if £prg(mut stk) go to $aux
+    COND = 9,
+if £prg(stk) go to $aux
+    CALL = 10,
+go to £prg(&mut stk)
+write &prg in $aux, goto £prg(&mut stk)
+    PONDER write &prg or &prg + 1 ? same question for goto.
+If there were a flag direction, goto stuff+flag no hesitation
+
+PONDER: boolean flags ?
+That could be genius.
+COND(flag from preceeding operations) combine with goto or NOOP to test other flags.
+Option to set the flag.
+One special flag commanding automatic behaviour of register, cutting in half the stack instructions needed ?.
+Inmy dreams: an ISA which allows palydromes, and other programs designed to be meaningful when read in reversed.
+
+Positional markers ? lke goto the next / previous marked area ? nah, that's what stk is for.
+
 
 ## Instructions set
 
@@ -96,12 +118,12 @@ inspect (prg[1])
 ? launch w default reg ?
 
 ## machine code
-    Becuase of high reflexivity (VN arch) but low level, the exact
+    Because of high reflexivity (VN arch) but low level, the exact
 choice of machine code values matters a lot. Ideally, good groupings
 should allow for easy manipulation of code using tritwise operations.
 In practice, there is also the constraint that we aren't rich in
 opcode space.
-    The temporary solution is to leave the instruction set up to
+    The temporary solution is to leave the instructions-set up to
 debate, and to let advanced players configure (map) their own machine
 code (and to use them as inspiration for sensible defaults).
 
@@ -109,9 +131,8 @@ code (and to use them as inspiration for sensible defaults).
 For now, relying heavily on customasm
 
 - Possibility to anchor the code, to start from anywhere
-instead of oiiii.
-Syntaxe: like a label but name is a number.
-- possibility to enter raw machine code.
+Syntax: could be like a label but name is a number.
+fortunately, this is a feature of customasm as well
 
 ## examples
 ### add5: *liiii = *illll + 5
@@ -136,7 +157,7 @@ Several executables, not too much, but maybe just enough.
     maybe a compiler/transpiler
 (maybe a set a transpiler and a single command to rule them all)
 
-    TODO Savefiles manipulations
+    Savefiles manipulations
         option to prune empty level directories ?
         to fill them (unlock all/some levels) ? or to fill some ? isn't fill just --no-check --no-time --no-run ? Nah, that is just printing the last dir
 

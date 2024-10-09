@@ -9,8 +9,6 @@ LOAD_STK_HED = -3,
 LOAD_STK_TAI = -2,
 LOAD_PRG_JMP = -1,
 LOAD_PRG_HLT =  0,
-// this NOOP consumes 2 instructions, not using the constant.
-// TODO NOPE, consuming only one.
 LOAD_PRG_NOP = +1,
 LOAD_AUX_ADR = +2,
 LOAD_AUX_DIR = +3,
@@ -57,14 +55,24 @@ REDU_MOV_HAT = -106,
 REDU_SWP_ADR = -105,
 REDU_MOV_TAI = -104,
 
+LOOP_NZ_HAT = 5,
+LOOP_GT_DECR = 6,
+LOOP_NZ_TAIL = 7,
+COND_STK_LE = 8,
+COND_STK_NZ = 9,
+COND_STK_GE = 10,
+CALL_STK_HAT = 11,
+CALL_STK_HED = 12,
+CALL_STK_TAI = 13,
+
+
 // PONDER?
-/// As a way to error or wrap without havign to
+/// As a way to error or wrap without having to
 /// check for program pointer overflow every time.
-// OOB = -0x80,
 // not a good idea, the function step will, eventually, need to be
 // reliable. The alternative is making the check every time we use
-// prog, which might become a lot more places than whenever we modify
-// it. Much simpler to always have prog correct.
+// prg, which might become a lot more places than whenever we modify
+// it. Much simpler to always have prg correct.
 };
 
 #endif

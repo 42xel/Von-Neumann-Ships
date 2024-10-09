@@ -5,7 +5,10 @@
 +3
 
 #addr 0
-reduce add_minus tai
-reduce mov aux
-push
+a <- &stk--, $stk <sum_diff> *a
+
+&stk <-> &aux
+
+; push
+*++&stk <- $aux
 
