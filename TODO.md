@@ -5,7 +5,7 @@ v Interactive run
     x Help menu, filtering the relevant part of the documentation
 v Documentation a comprehensive README, with all the instructions to install and run the game (including make -e ?).
 	v all commands ahave a help menu
-- I'd need a CONTRIBUTE.md thingy
+v I'd need a CONTRIBUTE.md thingy
 x A compiler ? customasm is annoying with the rule that you can't go above parent directory. Maybe I should wrap it. For now, make and shell script glue well enough.
 - A summary description of the machine and of each assembly instruction and machine code.
 v a way to run the game from within a level folder, so as to suggest looping using `cd $(./vns_game.sh)` from both outside the game and inside each level.

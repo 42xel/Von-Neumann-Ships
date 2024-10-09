@@ -42,7 +42,8 @@ tests: $(TSTLOGS) $(NTST)
 # but if I go that road, I might as well link target/vns_game.sh
 # TODO: the best solution for $interpreter is to add target to PATH, even if momentarilly so.
 # For $compilation_dir, this is fine, I now copy the asm definition in the save, which is at a constant path relative to individual levels.
-%.bin: %.asm
+COMPILATION_DIR=${shell find $$compilation_dir/asm}
+%.bin: %.asm $(COMPILATION_DIR)
 	realpath --relative-to="$$compilation_dir" $< |\
 	xargs -I {} sh -c 'cd "$$compilation_dir" && customasm {}'
 

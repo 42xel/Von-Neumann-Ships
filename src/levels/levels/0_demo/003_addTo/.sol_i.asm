@@ -2,8 +2,8 @@
 #include "../../../asm/program_bank.asm"
 
 #addr 0
-reduce mov tai
-reduce mov aux
-reduce mov hat
-reduce add_minus aux
+--&stk
+&stk <-> &aux
+++&stk
+$stk <sum_diff> $aux
 

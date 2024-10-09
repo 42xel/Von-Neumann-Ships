@@ -11,6 +11,7 @@ tape_in=
 tape_out=
 solution=
 quiet=
+start_over=
 
 usage() {
     cat << EOF
@@ -23,16 +24,17 @@ Description:
   - The output tape file will default to the input file unless specified separately.
   - The solution binary defaults to 'solution.bin' if not provided.
   - Loop mode allows you to iterate interactively. Press Enter to continue to the next iteration, and Ctrl+C to interrupt.
-  - The script automatically creates input/output files if they don't exist and runs the `vns_vm` for processing the tapes.
+  - The script automatically creates input/output files if they don't exist and runs the \`vns_vm\` for processing the tapes.
 
 Options:
   -n, --number-iterations <N> Set the number of iterations (default: 1)
   -l, --loop                  Enable loop mode for interactive execution
   -c, --case <case_no>        Specify the case number to run (default: '')
-  -i, --input <file>          Specify the input tape file (current: $tape_in)
-  -o, --output <file>         Specify the output tape file (current: $tape_out)
+  -i, --input <file>          Specify the input tape file (default: tape$case.bin)
+  -o, --output <file>         Specify the output tape file (default: tape$case.bin)
   -io <file>                  Set both input and output tapes at once
-  -s, --solution <file>       Specify the solution file (current: $solution)
+  -s, --solution <file>       Specify the solution file (default: solution.bin)
+  -f, --fresh                 Starts over (deletes tape_in before starting simulation)
   -q, --quiet                 Suppress output
   -h, --help                  Show this help message and exit
 
@@ -46,7 +48,7 @@ The last 3 bytes correspond the value of the registers:
 - the stack head position
 - the auxiliary register
 
-Aside from vns_interactive, `vns_vm -a` also understands that tape format.
+Aside from vns_interactive, \`vns_vm -a\` also understands that tape format.
 
 Examples:
   1. Run with default settings:
@@ -65,6 +67,8 @@ Examples:
      watch -pn 1 -d -q 3 $(basename $0)
 
 EOF
+# forces a flush apparently. I ran into a situation where it seemed necessary.
+printf "\n"
 }
 
 # TODO option to start fresh ? Special case of tape_in ?
@@ -78,9 +82,10 @@ EOF
     -o|--output) shift; tape_out="$1" ;;
     -io) shift; tape_in="$1" ; tape_out="$tape_in" ;;
     -s|--solution) shift; solution="$1" ;;
+    -f|--fresh) start_over=1 ;;
     -q|--quiet) quiet=1 ;;
     -h|--help) usage ; exit 0 ;;
-    *) echo "Unknown parameter passed: $1" ;;
+    *) echo "Unknown parameter passed: $1" ; exit 1 ;;
 esac
     shift
 done
@@ -101,8 +106,9 @@ fi
 : ${solution:='solution.bin'}
 # TODO something more sexy for compilation_dir
 compilation_dir=../../.. make 'in'"$case"'_i.bin' "$solution" 'out'"$case"'_i.bin'
-    # TODO define sensible behaviour for quiet and implement it
-    [ -z "$quiet" ] || exec 1>/dev/null 2>&1
+# TODO define sensible behaviour for quiet and implement it
+[ -z "$quiet" ] || exec 1>/dev/null 2>&1
+[ -z "$start_over" ] || rm -f "$tape_in"
 
             # loop once or forever
             while
