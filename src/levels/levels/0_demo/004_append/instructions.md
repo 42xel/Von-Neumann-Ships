@@ -1,6 +1,10 @@
 # Description
 The input contains a number at its last address -41.
-Add it to the first output address, +41, in place.
+The output contains a sequence of non zero numbers, starting from its first address +41.
+The list is garrantied to be of length 80 at most.
+
+# Assembly
+
 
 # Goals
 Your goal is to make it so:

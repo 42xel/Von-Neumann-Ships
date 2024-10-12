@@ -1,6 +1,14 @@
 # Description
-The input contains a number at its last address -41.
-Add it to the first output address, +41, in place.
+The input contains three numbers at its first three addresses -121, -120, -119.
+The output contains 81 numbers.
+Apply a circular cipher to the output, by adding to each output number each input number, looping.
+
+For example, if the input is [1, 0, -4] and the output starts as 45, 23, 32, -66, 75, 7, ...
+You are to transform the output to:
+46, 23, 28, -65, 75, 3
+
+# Assembly
+
 
 # Goals
 Your goal is to make it so:

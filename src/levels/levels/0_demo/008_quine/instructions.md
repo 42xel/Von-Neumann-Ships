@@ -1,6 +1,9 @@
 # Description
-The input contains a number at its last address -41.
-Add it to the first output address, +41, in place.
+The output contains arbitrary noise. Your task is to write a quine, that is a program which writes itself to the output.
+
+; TODO for later: variant of various difficulty, including one where the output is initially empty and doing nothign is already a quine, as well as one where the zeroes from the program are ignored baring at zero and one which is ran repeatedly and only the machine code executed matter.
+
+# Assembly
 
 # Goals
 Your goal is to make it so:

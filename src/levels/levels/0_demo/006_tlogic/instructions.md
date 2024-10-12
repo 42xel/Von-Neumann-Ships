@@ -1,10 +1,25 @@
 # Description
-The input contains a number at its last address -41.
-Add it to the first output address, +41, in place.
+The numbers are internally represented in ternary, with figures 0, +1 and -1.
+That is, a number `a` has the figures `a_0` `a_1` `a_2` `a_3` `a_4` in `{-1, 0, +1}` such that;
+```math
+a = a_0+3^0 a_1+3^1 a_2+3^2 a_3+3^3 a_4+3^4
+```
+
+The input and output contain numbers.
+Your goal is to compute the sum of all their figures, all `2*81*5` of them, modulo 243, and put it in the cell 0.
+At the end of the program, the input and the output shall be the same as they were at the beginning, but your program may have changed.
+
+; for later: make several variant: ignore the tape, take the tape at the beginning, take the tape at the end, the script is ran several times consecutively...
+
+#Assembly
+TODO TODO
+Mention that addition is already modulo 243
+
 
 # Goals
-Your goal is to make it so:
-- `out_f.bin` matches `out_x.bin`
+TODO TODO
+; Your goal is to make it so:
+; - `out_f.bin` matches `out_x.bin`
 
 ## Tests generation
 Single test, static files.

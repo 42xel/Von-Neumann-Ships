@@ -1,6 +1,13 @@
 # Description
-The input contains a number at its last address -41.
-Add it to the first output address, +41, in place.
+The output contains arbitrary noise. Your point is to swap it with your program.
+
+The initial values from -40 to 40 must be finally readable from 41 to 121 and vice-versa.
+
+Input is zeroed and does not matter, you may freely use it.
+
+
+# Assembly
+
 
 # Goals
 Your goal is to make it so:

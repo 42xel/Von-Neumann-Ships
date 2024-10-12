@@ -1,6 +1,8 @@
 # Description
-The input contains a number at its last address -41.
-Add it to the first output address, +41, in place.
+Copy the input to the ouput, in order, so that the final value at 41 is the initial value at -121, the final value at 41 is the initial one at -120, and so on up until the final value at 121 being the initial value at -41.
+
+# Assembly
+
 
 # Goals
 Your goal is to make it so:
@@ -20,4 +22,5 @@ Your program is then run with:
 When your program halts, you can think of its final state as split between `in_f.bin`, `out_f.bin` and `prg_f.bin`, f standing for final.
 These files are then checked in a way specified by the 'descriptions' and goal 'sections', often relying on x files, 'x' standing for expected.
 You can usually find a human readable definition of initial and expected files in the corresponding `.asm` files, among other files you can read to get an idea of the inner workings of the tests.
+
 

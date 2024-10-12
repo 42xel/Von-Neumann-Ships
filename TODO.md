@@ -1,23 +1,23 @@
 # What would it take to release a MVP in the wild ?
-v Interactive run
-    v Printing the tape.
-    v Step by step.
-    x Help menu, filtering the relevant part of the documentation
-v Documentation a comprehensive README, with all the instructions to install and run the game (including make -e ?).
-	v all commands ahave a help menu
-v I'd need a CONTRIBUTE.md thingy
-x A compiler ? customasm is annoying with the rule that you can't go above parent directory. Maybe I should wrap it. For now, make and shell script glue well enough.
-- A summary description of the machine and of each assembly instruction and machine code.
-v a way to run the game from within a level folder, so as to suggest looping using `cd $(./vns_game.sh)` from both outside the game and inside each level.
-x 27 or so levels
-    - a working loop instruction
-    - a working conditional instruction
-v a release branch (trunk) separate from the current one (trunk=>root) containing generated headers.
-    - Minimizes dependencies necessary to play
-        - Opens a lot more possibilities beyond perl for code generation (lua + LPEG or Raku)
-    - Allows dirty hand fix of broken generated headers
-    x Allows to remove the test cases solutions
-    - Maybe some binaries ?
+[v] Interactive run
+    [v] Printing the tape.
+    [v] Step by step.
+    [x] Help menu, filtering the relevant part of the documentation
+[v] Documentation a comprehensive README, with all the instructions to install and run the game (including make -e ?).
+	[v] all commands ahave a help menu
+[v] I'd need a CONTRIBUTE.md thingy
+[x] A compiler ? customasm is annoying with the rule that you can't go above parent directory. Maybe I should wrap it. For now, make and shell script glue well enough.
+[ ] A summary description of the machine and of each assembly instruction and machine code.
+[v] a way to run the game from within a level folder, so as to suggest looping using `cd $(./vns_game.sh)` from both outside the game and inside each level.
+[x] 27 or so levels
+    [ ] a working loop instruction
+    [ ] a working conditional instruction
+[v] a release branch (trunk) separate from the current one (trunk=>root) containing generated headers.
+    [ ] Minimizes dependencies necessary to play
+        [ ] Opens a lot more possibilities beyond perl for code generation (lua + LPEG or Raku)
+    [ ] Allows dirty hand fix of broken generated headers
+    [x] Allows to remove the test cases solutions
+    [ ] Maybe some binaries ?
 
 
 # Player interface
