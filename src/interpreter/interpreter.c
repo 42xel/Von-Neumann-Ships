@@ -56,6 +56,11 @@ fprintf(stderr, "*%d: %d\t", *stk, c);
 fprintf(stderr, "*%d: %d\n", v, w);
 // PONDER : what if *aux == *stk ? Set it to 0 ?
 tape[*stk] = v; tape[c] = w; return 0;
+	case REDU_ADD_HAT: fprintf(stderr, "REDU_ADD_HAT\t"); c = xpp243(stk); goto sum;
+	case REDU_ADD_HED: fprintf(stderr, "REDU_ADD_HED\t"); c = *aux;        goto sum;
+	case REDU_ADD_TAI: fprintf(stderr, "REDU_ADD_TAI\t"); c = xmm243(stk); goto sum;
+	sum:
+tape[*stk] += tape[c]; return 0;
 
    case REDU_MNX_HAT: fprintf(stderr, "REDU_MNX_HAT\n"); c = xpp243(stk); goto min_max;
    case REDU_MNX_HED: fprintf(stderr, "REDU_MNX_HED\n"); c = *aux;        goto min_max;
@@ -65,9 +70,11 @@ if (tape[c] < (v = tape[*stk])) tape[*stk] = tape[c], tape[c] = v;
 return 0;
 
 // tritwise min max
-case REDU_TNX_HAT: fprintf(stderr, "REDU_TNX_HAT\n"); return _ERR_WIP;
-case REDU_TNX_HED: fprintf(stderr, "REDU_TNX_HED\n"); return _ERR_WIP;
-case REDU_TNX_TAI: fprintf(stderr, "REDU_TNX_TAI\n"); return _ERR_WIP;
+	case REDU_TNX_HAT: fprintf(stderr, "REDU_TNX_HAT\n"); c = xpp243(stk); goto t_min_max;
+	case REDU_TNX_HED: fprintf(stderr, "REDU_TNX_HED\n"); c = *aux;        goto t_min_max;
+	case REDU_TNX_TAI: fprintf(stderr, "REDU_TNX_TAI\n"); c = xmm243(stk); goto t_min_max;
+	t_min_max:
+return 0;
 
    case REDU_SWP_HAT: fprintf(stderr, "REDU_SWP_HAT\n"); c = xpp243(stk); goto redu_swap;
    // NOP. not really a swap, but it makes sense if you think about it in a certain way.
@@ -82,7 +89,7 @@ case REDU_MOV_TAI: fprintf(stderr, "REDU_MOV_TAI\n"); xmm243(stk);              
 
 // TODO: something fancy with flags.
 case LOOP_NZ_HAT:  fprintf(stderr, "LOOP_NZ_HAT\n");  if (tape[mmx243(stk)])   *prg = tape[*aux]; return 0;
-case LOOP_GT_DECR: fprintf(stderr, "LOOP_GT_DECR\n"); if (mmx243(&tape[*stk])) *prg = tape[*aux]; return 0;
+case LOOP_DECR_GT: fprintf(stderr, "DECR_LOOP_GT\n"); if (mmx243(&tape[*stk])) *prg = tape[*aux]; return 0;
 case LOOP_NZ_TAIL: fprintf(stderr, "LOOP_NZ_TAIL\n"); if (tape[ppx243(stk)])   *prg = tape[*aux]; return 0;
 
 case COND_STK_LE:  fprintf(stderr, "COND_STK_LE\n"); if (tape[*stk] <= 0) *prg = tape[*aux]; return 0;

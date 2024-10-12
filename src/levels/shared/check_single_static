@@ -1,9 +1,20 @@
 #!/bin/sh
 
-# TODO make better error logging.
-cat $level_dir/in_i.bin - $level_dir/out_i.bin |
-$interpreter |
-tail -c 81 |
-diff $level_dir/out_x.bin - ||
+# # TODO make better error logging.
+# cat $level_dir/in_i.bin - $level_dir/out_i.bin |
+# $interpreter | # I'd like to pipe the stderr of that to the main stdout
+# tail -c 81 | # and pipe that to the diff
+# diff -q $level_dir/out_x.bin - || # these are binary files, I don't think diff is abel to print anything relevant
+# echo KO
+
+
+# Run the test case
+{
+cat "$level_dir/in_i.bin" - "$level_dir/out_i.bin" |
+"$interpreter" |
+tail -c 81 |  # Extract the last 81 bytes
+cmp -l - "$level_dir/out_x.bin"  || # Binary comparison with expected output
 echo KO
+} 2>&1
+
 

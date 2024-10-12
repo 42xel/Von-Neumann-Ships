@@ -48,7 +48,7 @@ Logical shift allows to retrieve the values 00, 01 and 11.
 The symobls used for display are
 * n for 00 (*n*ot, and is mirror of u)
 * m for 01 (*m*aybe)
-* u for 11 (tru*e*)
+* u for 11 (tr*u*e)
 Some numbers :
 nmumu, nunu
 Numbers are preferably displayed of length 5, if some are ommited, assume

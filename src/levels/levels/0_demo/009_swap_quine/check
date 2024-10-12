@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# TODO make better error logging.
+mkdir -p /tmp/$level_dir
+cat $level_dir/out_i.bin > /tmp/$level_dir/tape_i.bin
+tee -a /tmp/$level_dir/tape_i.bin |
+cat $level_dir/in_i.bin - $level_dir/out_i.bin |
+$interpreter |
+tail -c 162 |
+diff /tmp/$level_dir/tape_i.bin - ||
+echo KO
+

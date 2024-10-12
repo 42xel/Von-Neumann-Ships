@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# TODO make better error logging.
+mkdir -p /tmp/$level_dir
+tee /tmp/$level_dir/prg_i.bin |
+cat $level_dir/in_i.bin - $level_dir/out_i.bin |
+$interpreter |
+tail -c 81 |
+diff /tmp/$level_dir/prg_i.bin - ||
+echo KO
+

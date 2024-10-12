@@ -58,6 +58,9 @@
     REDU_TNX_HED => asm {-114}
     REDU_TNX_TAI => asm {-113}
 
+    REDU_ADD_HAT => asm {-103}
+    REDU_ADD_HED => asm {-102}
+    REDU_ADD_TAI => asm {-101}
 
     REDU_SWP_HAT => asm {-109}
     REDU_SWP_HED => asm {-108}
@@ -67,17 +70,17 @@
     REDU_SWP_ADR => asm {-105}
     REDU_MOV_TAI => asm {-104}
 
-    LOOP_HAT     => {5}
-    LOOP_DECR    => {6}
-    LOOP_TAIL    => {7}
+    LOOP_NZ_HAT  => asm {5}
+    LOOP_DECR_GT => asm {6}
+    LOOP_NZ_TAIL => asm {7}
 
-    COND_STK_LE  => {8}
-    COND_STK_NZ  => {9}
-    COND_STK_GE  => {10}
+    COND_STK_LE  => asm {8}
+    COND_STK_NZ  => asm {9}
+    COND_STK_GE  => asm {10}
 
-    CALL_STK_HAT => {11}
-    CALL_STK_HED => {12}
-    CALL_STK_TAI => {13}
+    CALL_STK_HAT => asm {11}
+    CALL_STK_HED => asm {12}
+    CALL_STK_TAI => asm {13}
 
 }
 
@@ -89,9 +92,9 @@
 }
 #subruledef symb_target
 {
-    $stk => -1
-    $prg => 0
-    $aux => 1
+    &stk => -1
+    &prg => 0
+    &aux => 1
 }
 #subruledef stk_at
 {
@@ -137,12 +140,13 @@
 }
 #subruledef reduce_op
 {
-    sum_diff => asm { REDU_ADM_HED }
-    min_max => asm { REDU_MNX_HED }
+    sum_diff      => asm { REDU_ADM_HED }
+    sum           => asm { REDU_ADD_HED }
+    min_max       => asm { REDU_MNX_HED }
     twise_min_max => asm { REDU_TNX_HED }
     ; swap is handled differently because it operates on the addresses
-    ; swap => asm { REDU_SWP_HED }
-    identity => asm { REDU_SWP_ADR }
+    ; swap        => asm { REDU_SWP_HED }
+    identity      => asm { REDU_SWP_ADR }
 }
 
 ; TODO : segregate the different styles into different files and choose one to promote as default.
@@ -167,6 +171,7 @@
     load aux {mod: aux_indirection}, {val: Cell} => (asm { LOAD_AUX_DIR } + mod)`8 @ val
     load aux {mod: aux_indirection} => (asm { LOAD_AUX_DIR } + mod)`8
     {mod: symb_aux_indirection} <- {val: Cell} => (asm { LOAD_AUX_DIR } + mod)`8 @ val
+    {mod: symb_aux_indirection} <- => (asm { LOAD_AUX_DIR } + mod)`8
 
     ; into `stk` related values
     load stk {at: stk_at}, {val: Cell} => (asm { LOAD_STK_HED } + at)`8 @ val
@@ -177,9 +182,11 @@
     {at: symb_stk_at}stk <- => (asm { LOAD_STK_HED } + at)`8
 
     ; read/write/swap interaction between the stack and the auxiliary register
-    {at: symb_stk_at}stk <- $aux  => (asm { STAK_WRT_HED } + at)`8
+    {at: symb_stk_at}stk <-  $aux => (asm { STAK_WRT_HED } + at)`8
     {at: symb_stk_at}stk <-> $aux => (asm { STAK_SWP_HED } + at)`8
-    $aux <- {at: symb_stk_at}stk  => (asm { STAK_REA_HED } + at)`8
+    *&stk++ ->  $aux => asm { STAK_REA_HAT }
+    $stk    ->  $aux => asm { STAK_REA_HED }
+    *&stk-- ->  $aux => asm { STAK_REA_TAI }
     push => asm { STAK_WRT_TAI }
     empl => asm { STAK_WRT_HED }
     dpush=> asm { STAK_WRT_HAT }
@@ -191,7 +198,7 @@
     ; address manipulations
     $aux <-  {tgt: symb_target} => (asm { ADDR_REA_PRG } + tgt)`8
     $aux <-> {tgt: symb_target} => (asm { ADDR_SWP_PRG } + tgt)`8
-    {tgt: symb_target} <- $aux  => (asm { ADDR_WRT_PRG } + tgt)`8
+    $aux -> {tgt: symb_target}  => (asm { ADDR_WRT_PRG } + tgt)`8
     addr {op: rsw} {tgt: target} => (asm { ADDR_SWP_PRG } + 3 * op + tgt)`8
 
     ; operations.
@@ -209,6 +216,10 @@
     reduce swap hat => asm { REDU_SWP_HAT }
     nop => asm { REDU_SWP_HED }
 
+    * &stk++ +-> $stk => asm { REDU_ADD_HAT }
+    $aux     +-> $stk => asm { REDU_ADD_HED }
+    * &stk-- +-> $stk => asm { REDU_ADD_TAI }
+
     --&stk => asm { REDU_MOV_TAI }
     ++&stk => asm { REDU_MOV_HAT }
     &stk <swap> &aux  => asm { REDU_SWP_ADR }
@@ -216,15 +227,16 @@
     reduce swap addr => asm { REDU_SWP_ADR }
 
 
-
     ; control flow
-    *--&stk ? jmp $aux => asm { LOOP_NZ_HAT }
-     --$stk ? jmp $aux => asm { LOOP_GT_DECR }
-    *++$stk ? jmp $aux => asm { LOOP_NZ_TAIL }
+    ; the exclamation marks are intended to be question marks
+    *--&stk !q jmp $aux => asm { LOOP_NZ_HAT }
+     --$stk !q jmp $aux => asm { LOOP_DECR_GT }
+    *++&stk !q jmp $aux => asm { LOOP_NZ_TAIL }
 
-    $stk <= 0 ? jmp $aux => { COND_STK_LE }
-    $stk != 0 ? jmp $aux => { COND_STK_NZ }
-    $stk >= 0 ? jmp $aux => { COND_STK_GE }
+    $stk !le 0 !q jmp $aux => { COND_STK_LE }
+    $stk !ne 0 !q jmp $aux => { COND_STK_NZ }
+    $stk       !q jmp $aux => { COND_STK_NZ }
+    $stk !ge 0 !q jmp $aux => { COND_STK_GE }
 
     ; Call instructions: pick jump address from stack while storing current address to aux.
     ; behaves like $aux <- &prg + 1, &prg <- {at: symb_stk_at}stk

@@ -1,6 +1,18 @@
 # Description
-The input contains a number at its last address -41.
-Add it to the first output address, +41, in place.
+The input contains three non zero numbers at its first three addresses -121, -120, -119. The rest of the input is zeroed.
+The output contains 81 numbers.
+Apply a circular cipher to the output, by adding to each output number each input number, looping.
+
+For example, if the input is [1, 10, -4] and the output starts as 45, 23, 32, -66, 75, 7, ...
+You are to transform the output to:
+46, 33, 28, -65, 85, 3
+
+Some level, such as this one, have hints. Look for a file named `hint.md`, or look for the relevant option of `vns_game`.
+
+# Assembly
+
+addsub
+
 
 # Goals
 Your goal is to make it so:

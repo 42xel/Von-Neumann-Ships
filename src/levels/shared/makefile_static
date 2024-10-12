@@ -30,10 +30,11 @@ tests: $(TSTLOGS) $(NTST)
 .PRECIOUS: %.bin
 
 .NOTINTERMEDIATE: %.log
-%.log: %_i.bin $(CASESBINS)
+%.log: %_i.bin $(CASESBINS) $(shell realpath ./check)
 	level_dir=$$(dirname $<) ./check < $< > $@ 2>&1
 .not%.log: .not%_i.bin $(CASESBINS)
-	! ./check < $< > $@
+	level_dir=$$(dirname $<) ./check < $< > $@ 2>&1
+#	 ! ./check < $< > $@
 
 # are $compilation_dir and $interpreter really a good idea ?
 # more robust/dry in case the places where they are changed in the future,

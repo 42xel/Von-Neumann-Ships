@@ -78,9 +78,10 @@ indirection: *aux = **aux, *aux = *prg[1] et stk[0] = **aux
 
 n * stackreduce : *(stk++) opn *stk |> *stk, *(stk--) opn *stk |> *stk, *stk opn *aux |> *stk
     minus add
-    ? mul
+    ? mul carry
     ? div mod
-    xor ? addmod
+    ? xor ? nah, rather in the fixed operand...
+    ? addmod
     min max
     trit minmax
     swap
