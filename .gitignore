@@ -57,3 +57,6 @@ unit_tests/
 headers/
 target/vns_vm
 save/
+# the documentation of an ancient text formatting program (for paper printing), to outnerd zach when it comes to printable documentation.
+trofftut.ps
+

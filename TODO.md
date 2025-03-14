@@ -27,8 +27,10 @@ Zellij interface
 tmux interface
 normal (ncurse or whatever) TUI
 
+Less text (by default), more interaction
+
 backup load wipe|new
-navigate ? sh cd ls tree kak !broot(way too big) C
+navigate ? sh, cd ls tree, kak, !broot(way too big), C
 
 # tooling
 A script folder separate from `target`. Building executable from script is merely a symlink minus the extension.
@@ -40,7 +42,7 @@ macro try and ptry (perror(), try(...)) ?
 # later
 perl   => raku or lua + LPEG. Less portable but so much better.
 zellij => Tmux (+ fennel ?) Tmux is so much better, fennel is just flex
-C      => zig ? only if need arises. But I don't know when need will arise...
+C      => zig ? only if need arises. But I don't know when need will arise, because I on't know zig...
 git    => ? Whatever Florent Becker has been doing ?
 man    => a way to print the man pages ? man pages, typesetters run-off (troff) were inintially meant to be printed. Using a real life ancient prining format would be both a salute to and a flex on Zackgames retro papers manuals.
 
